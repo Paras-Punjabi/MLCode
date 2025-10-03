@@ -23,10 +23,10 @@ class FilesHandler(FileSystemEventHandler):
     def get_all_files(self,path):
         files = []
         def solve(path):
-            if(".ipynb_checkpoints" in path):
+            if(".ipynb_checkpoints" in path or os.path.basename(path).startswith(".~")):
                 return
             if(os.path.isfile(path)):
-                files.append(path.replace("\\","/")[2:])
+                files.append(path)
                 return
             for item in os.listdir(path):
                 solve(os.path.join(path,item))
@@ -36,40 +36,40 @@ class FilesHandler(FileSystemEventHandler):
     
     def on_modified(self, event):
         try:
-            if(event.is_directory):
+            if(event.is_directory or os.path.basename(event.src_path).startswith(".~")):
                 return
             self.obj_store_client.upload_object(event.src_path)
         except Exception as e:
-            print(f"==> Error: {e}")
+            print(f"[WATCHDOG] Error: {e}")
             
     def on_created(self, event):
         try:
-            if(event.is_directory):
+            if(event.is_directory or os.path.basename(event.src_path).startswith(".~")):
                 return
             self.obj_store_client.upload_object(event.src_path)
         except Exception as e:
-            print(f"==> Error: {e}")
+            print(f"[WATCHDOG] Error: {e}")
 
     def on_deleted(self, event):
         try:
-            if(event.is_directory):
+            if(event.is_directory or os.path.basename(event.src_path).startswith(".~")):
                 return
             self.obj_store_client.delete_object(event.src_path)
         except Exception as e:
-            print(f"==> Error: {e}")
+            print(f"[WATCHDOG] Error: {e}")
 
     def on_moved(self, event):
         try:
-            if(event.is_directory):
+            if(event.is_directory or os.path.basename(event.src_path).startswith(".~")):
                 return
 
             self.obj_store_client.upload_object(event.dest_path)
             self.obj_store_client.delete_object(event.src_path)
             
-            print(f"==> File Renamed from {event.src_path} to {event.dest_path}")
+            print(f"[WATCHDOG] File Renamed from {event.src_path} to {event.dest_path}")
             
         except Exception as e:
-            print(f"==> Error: {e}")
+            print(f"[WATCHDOG] Error: {e}")
 
 class WatchFiles:
     def __init__(self,endpoint,access_key,secret_key,user_id,problem_id,bucket_name,watch_dir):
@@ -80,7 +80,7 @@ class WatchFiles:
     def start(self):
         self.observer.schedule(self.handler,self.watch_dir,recursive=True)
         self.observer.start()
-        print("==> WatchDog Started..")
+        print("[WATCHDOG] WatchDog Started..")
         try:
             while self.observer.is_alive():
                 pass

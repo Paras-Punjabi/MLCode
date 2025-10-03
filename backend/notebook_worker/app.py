@@ -5,11 +5,15 @@ import threading
 import time
 from watch_files import WatchFiles
 from object_store import MinioObjectStore
+import sys
+
+sys.stdout.reconfigure(line_buffering=True)
+os.environ["PYTHONUNBUFFERED"] = "1"
 
 #* ENV & CONSTANT Variables
-MINIO_URI = os.getenv("MINIO_URI")
-MINIO_ROOT_USER = os.getenv("MINIO_ROOT_USER")
-MINIO_ROOT_PASSWORD = os.getenv("MINIO_ROOT_PASSWORD")
+OBJECT_STORE_URI = os.getenv("OBJECT_STORE_URI")
+ACCESS_KEY = os.getenv("ACCESS_KEY")
+SECRET_KEY = os.getenv("SECRET_KEY")
 USER_ID = os.getenv("USER_ID")
 PROBLEM_ID = os.getenv("PROBLEM_ID")
 BUCKET_NAME = "notebooks"
@@ -27,18 +31,18 @@ class NotebookContainer:
 
         self.obj_store_client = MinioObjectStore(endpoint,access_key,secret_key,False,user_id,problem_id,bucket_name,watch_dir)
         
-    def pull_objects_from_minio(self):
+    def pull_objects_from_store(self):
         objects = self.obj_store_client.get_objects(prefix=f"{self.user_id}/{self.problem_id}")
 
         for item in objects:
             file_name = item.object_name.replace(f"{self.user_id}/{self.problem_id}",self.watch_dir)
             self.obj_store_client.download_object(object_name=item.object_name,file_path=file_name)
         
-        print("==> Notebook and other files PULLED from MINIO")
+        print("[ROOT] Notebook and other files PULLED from Object Store")
     
     def create_notebook(self):
         content = {"cells": [],"metadata": {"kernelspec":{"name": "python3","display_name": "Python 3","language": "python"}},"nbformat": 4,"nbformat_minor": 5}
-        print("==> Notebook Does not Exists")
+        print("[ROOT] Notebook Does not Exists")
 
         notebook_path = os.path.join(self.watch_dir,"main.ipynb") 
         with open(notebook_path,"w") as file:
@@ -46,7 +50,7 @@ class NotebookContainer:
         
         self.obj_store_client.upload_object(notebook_path)
         
-        print("==> Notebook Created in MINIO")
+        print("[ROOT] Notebook Created in Object Store")
         
     def run_jupyter(self):
         notebook_path = os.path.join(self.watch_dir,"main.ipynb") 
@@ -61,21 +65,21 @@ class NotebookContainer:
             "--no-browser", 
             "--allow-root", 
             notebook_path
-        ],check=True)
+        ],check=True)        
     
     def run(self):
         is_present = self.obj_store_client.is_object_present(object_name=f"{self.user_id}/{self.problem_id}/main.ipynb")
 
         if(is_present):
-            print("==> Notebook Exists in MINIO")
-            self.pull_objects_from_minio()
+            print("[ROOT] Notebook Exists in Object Store")
+            self.pull_objects_from_store()
         else:
             self.create_notebook()
                 
         watch_files = WatchFiles(self.endpoint,self.access_key,self.secret_key,self.user_id,self.problem_id,self.bucket_name,self.watch_dir)
         
-        t1 = threading.Thread(target=watch_files.start)
-        t2 = threading.Thread(target=self.run_jupyter)
+        t1 = threading.Thread(target=watch_files.start,name="WatchDog")
+        t2 = threading.Thread(target=self.run_jupyter,name="Jupyter Notebook")
         
         t1.start()
         t2.start()
@@ -84,5 +88,5 @@ class NotebookContainer:
         t2.join()
 
 if __name__ == '__main__':
-    notebook = NotebookContainer(MINIO_URI,MINIO_ROOT_USER,MINIO_ROOT_PASSWORD,USER_ID,PROBLEM_ID,BUCKET_NAME,WATCH_DIR)
+    notebook = NotebookContainer(OBJECT_STORE_URI,ACCESS_KEY,SECRET_KEY,USER_ID,PROBLEM_ID,BUCKET_NAME,WATCH_DIR)
     notebook.run()

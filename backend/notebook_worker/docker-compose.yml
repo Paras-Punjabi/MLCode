@@ -6,9 +6,9 @@ services:
       minio:
         condition: service_healthy
     environment:
-      MINIO_URI: "minio:9000"
-      MINIO_ROOT_USER: root
-      MINIO_ROOT_PASSWORD: password
+      OBJECT_STORE_URI: "minio:9000"
+      ACCESS_KEY: root
+      SECRET_KEY: password
       USER_ID: paras
       PROBLEM_ID: pandas
     ports:
