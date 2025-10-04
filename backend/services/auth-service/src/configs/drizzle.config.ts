@@ -1,8 +1,8 @@
-import config from './dotenv.config.js';
+import config from './dotenv.config';
 import { defineConfig } from 'drizzle-kit';
 
 export default defineConfig({
-  schema: 'src/db/schema.js',
+  schema: 'src/db/schema.ts',
   out: 'src/db/migrations/',
   dialect: 'postgresql',
   casing: 'snake_case',
