@@ -6,6 +6,9 @@ const config = {
   // Port on which express is running
   PORT: parseInt(process.env.PORT!) || 5000,
 
+  // Log level, default to max level of 'info'
+  LOG_LEVEL: process.env.LOG_LEVEL || 'info',
+
   // Database connection string
   DATABASE_URI: process.env.DATABASE_URI!,
 

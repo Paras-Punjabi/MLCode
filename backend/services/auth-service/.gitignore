@@ -5,3 +5,7 @@ node_modules/
 
 # database
 src/db/migrations
+
+# logs
+logs/
+*.log
