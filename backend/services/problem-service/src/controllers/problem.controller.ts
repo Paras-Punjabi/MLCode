@@ -1,18 +1,14 @@
 import { DrizzleQueryError, eq, count } from 'drizzle-orm';
-import db from '../configs/db.config';
 import { Request, Response } from 'express';
-import { problemsTable } from '../db/schema';
-import LFURedisCache from '../redis';
+import ProblemService from '@/services/problem.service';
 
-const redis = new LFURedisCache();
+const problemService = new ProblemService();
 
 export async function getProblems(req: Request, res: Response) {
   try {
     let queryParams = req.query;
     let page = 1,
-      limit = 2,
-      totalProblems = 0,
-      totalPages = 0;
+      limit = 2;
 
     if (
       queryParams['page'] !== undefined &&
@@ -22,28 +18,10 @@ export async function getProblems(req: Request, res: Response) {
       limit = parseInt(queryParams['limit'] as string);
     }
 
-    let totalResults = await redis.client.get('total_problems');
-
-    if (totalResults == null) {
-      let totalProblemsResult = await db
-        .select({ count: count() })
-        .from(problemsTable);
-
-      if (totalProblemsResult.length > 0) {
-        totalProblems = totalProblemsResult[0].count;
-        totalPages = Math.ceil(totalProblems / limit);
-        await redis.client.set('total_problems', totalProblems, 'EX', 300);
-      }
-    } else {
-      totalProblems = parseInt(totalResults);
-      totalPages = Math.ceil(totalProblems / limit);
-    }
-
-    let data = await db
-      .select()
-      .from(problemsTable)
-      .offset((page - 1) * limit)
-      .limit(limit);
+    let { data, totalProblems, totalPages } = await problemService.getProblems(
+      page,
+      limit
+    );
 
     res.status(200).json({
       success: true,
@@ -72,14 +50,7 @@ export async function getProblems(req: Request, res: Response) {
 export async function getProblemById(req: Request, res: Response) {
   try {
     let problemId: string = req.params.problem_id;
-    let data = await redis.get(problemId);
-    if (data == null) {
-      data = await db
-        .select()
-        .from(problemsTable)
-        .where(eq(problemsTable.problemId, problemId));
-      await redis.push(problemId, data);
-    }
+    let data = await problemService.getProblemById(problemId);
     res.status(200).json({
       success: true,
       data,
