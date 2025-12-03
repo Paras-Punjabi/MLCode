@@ -15,7 +15,7 @@ const httpLogger = winston.createLogger({
 });
 
 const httpLoggerMiddleware = morgan(
-  ':method :url :status :res[content-length] - :response-time ms',
+  process.env.NODE_ENV === 'prod' ? 'combined' : 'dev',
   {
     stream: {
       write: (message) => httpLogger.http(message.trim()),

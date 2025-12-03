@@ -9,8 +9,8 @@ export const authMiddleware = (
 ) => {
   // parse tokens
   const authHeader = req.headers.authorization;
-  const bearerToken = authHeader?.split(' ')[1];
-  if (!bearerToken) return next(Error('Token not found'));
+  const [tokenType, bearerToken] = authHeader?.split(' ') || [];
+  if (tokenType !== 'bearer') return next(Error('Bearer token not found'));
 
   try {
     verifyInternalJwt(bearerToken);

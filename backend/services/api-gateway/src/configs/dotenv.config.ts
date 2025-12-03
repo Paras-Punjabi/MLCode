@@ -19,6 +19,11 @@ const config = {
   // ClerkJS keys
   CLERK_PUBLISHABLE_KEY: process.env.CLERK_PUBLISHABLE_KEY!,
   CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY!,
+
+  // SERVICE urls
+  SERVICES: {
+    'problem-service': process.env.PROBLEM_SERVICE_URL,
+  },
 };
 
 export default config;
