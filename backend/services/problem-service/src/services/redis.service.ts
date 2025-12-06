@@ -1,12 +1,27 @@
 import Redis from 'ioredis';
-import config from '../configs/dotenv.config';
+import config from '@/configs/dotenv.config';
+import { LFUCache, Cache } from '@/core/cache.interface';
 
-export default class LFURedisCache {
-  client: Redis;
-  sortedSetName: string;
-  hashSetName: string;
-  initalFrequency: number;
-  maxLength: number;
+export class RedisCache implements Cache {
+  private client: Redis;
+  constructor() {
+    this.client = new Redis(config.REDIS_URI);
+  }
+  async get(key: string) {
+    return await this.client.get(key);
+  }
+
+  async set(key: string, ttl: number, value: string) {
+    await this.client.setex(key, ttl, value);
+  }
+}
+
+export class LFURedisCache implements LFUCache {
+  private client: Redis;
+  private sortedSetName: string;
+  private hashSetName: string;
+  private initalFrequency: number;
+  private maxLength: number;
 
   constructor() {
     this.client = new Redis(config.REDIS_URI);
