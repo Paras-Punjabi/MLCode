@@ -3,6 +3,6 @@ import problemRouter from './problem.route';
 
 const router = Router();
 
-router.use('/problems', problemRouter);
+router.use('/', problemRouter);
 
 export default router;

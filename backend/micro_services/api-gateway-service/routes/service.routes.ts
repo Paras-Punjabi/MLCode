@@ -13,7 +13,6 @@ if (SERVICES['problem-service']) {
     createProxyMiddleware({
       target: SERVICES['problem-service'],
       changeOrigin: true,
-      pathRewrite: { '^/problems': '' },
     })
   );
 }

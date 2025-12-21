@@ -7,9 +7,14 @@ export const problemLevelEnum = pgEnum('problemLevel', [
   'HARD',
 ]);
 
-export const statusEnum = pgEnum('status', ['ACCEPTED', 'ATTEMPTED']);
+export const statusEnum = pgEnum('status', [
+  'ACCEPTED',
+  'ATTEMPTED',
+  'PENDING',
+  'FAILED',
+]);
 
-export const userRoleEnum = pgEnum('user_role', ['user', 'admin']);
+export const userRoleEnum = pgEnum('user_role', ['USER', 'ADMIN']);
 
 export const problemsTable = pgTable('problems', {
   problemId: uuid('problem_id').defaultRandom().primaryKey(),
@@ -25,7 +30,7 @@ export const usersTable = pgTable('users', {
   userEmail: varchar('user_email', { length: 255 }).unique().notNull(),
   userRoles: userRoleEnum('user_roles')
     .array()
-    .default(sql`ARRAY['user']::user_role[]`),
+    .default(sql`ARRAY['USER']::user_role[]`),
 });
 
 export const submissionsTable = pgTable('submissions', {
@@ -37,6 +42,9 @@ export const submissionsTable = pgTable('submissions', {
     .references(() => problemsTable.problemId)
     .notNull(),
   status: statusEnum('status').notNull(),
+  input: text('input').default('N/A').notNull(),
+  output: text('output').default('N/A').notNull(),
+  expected: text('expected').default('N/A').notNull(),
 });
 
 export const notebooksTable = pgTable('notebooks', {
