@@ -62,16 +62,16 @@ VALUES
 
 INSERT INTO users (user_id, user_name, user_email, user_roles)
 VALUES
-('b7a3fd0d-7fa8-4d18-b8ab-f5b8d056d1a1', 'paras', 'paras@example.com', ARRAY['USER','ADMIN']::user_role[]),
-('6e96f392-b3c4-4bd5-90b2-1e4147a1c519', 'chandrasekhar', 'chandrasekhar@example.com', ARRAY['USER','ADMIN']::user_role[]),
-('f7488290-54fd-46a8-9c7b-9f7b282ecdc2', 'aakash', 'aakash@example.com', ARRAY['USER']::user_role[]),
-('8c71fb99-7f35-43e2-af71-222e4eafc4b1', 'rohan', 'rohan@example.com', ARRAY['USER']::user_role[]),
-('dc3c0136-4da4-4d98-bc58-dfe6a7e2e603', 'mehul', 'mehul@example.com', ARRAY['USER']::user_role[]),
-('75ad2e55-256d-4c58-8f72-0b2f8dc94337', 'yash', 'yash@example.com', ARRAY['USER']::user_role[]),
-('a24fb542-8be0-4f53-9186-7c88deb6a77f', 'sahil', 'sahil@example.com', ARRAY['USER']::user_role[]),
-('0e69f6ea-4d1c-4415-a23b-79ecba1338b9', 'karan', 'karan@example.com', ARRAY['USER']::user_role[]),
-('e7d84fd4-08ff-496d-90e8-2370486b61bb', 'amit', 'amit@example.com', ARRAY['USER']::user_role[]),
-('1a3dfdd4-f3dd-4e85-8c90-29e45772133b', 'deepak', 'deepak@example.com', ARRAY['USER']::user_role[]);
+('b7a3fd0d-7fa8-4d18-b8ab-f5b8d056d1a1', 'paras', 'paras@example.com', 'ADMIN'),
+('6e96f392-b3c4-4bd5-90b2-1e4147a1c519', 'chandrasekhar', 'chandrasekhar@example.com', 'ADMIN'),
+('f7488290-54fd-46a8-9c7b-9f7b282ecdc2', 'aakash', 'aakash@example.com', 'USER'),
+('8c71fb99-7f35-43e2-af71-222e4eafc4b1', 'rohan', 'rohan@example.com', 'USER'),
+('dc3c0136-4da4-4d98-bc58-dfe6a7e2e603', 'mehul', 'mehul@example.com', 'USER'),
+('75ad2e55-256d-4c58-8f72-0b2f8dc94337', 'yash', 'yash@example.com', 'USER'),
+('a24fb542-8be0-4f53-9186-7c88deb6a77f', 'sahil', 'sahil@example.com', 'USER'),
+('0e69f6ea-4d1c-4415-a23b-79ecba1338b9', 'karan', 'karan@example.com', 'USER'),
+('e7d84fd4-08ff-496d-90e8-2370486b61bb', 'amit', 'amit@example.com', 'USER'),
+('1a3dfdd4-f3dd-4e85-8c90-29e45772133b', 'deepak', 'deepak@example.com', 'USER'),
 
 INSERT INTO submissions (submission_id, user_id, problem_id, status)
 VALUES

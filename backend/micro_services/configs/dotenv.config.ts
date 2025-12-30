@@ -1,13 +1,14 @@
 import { config } from 'dotenv';
 
-config({ path: 'D:\\React Frameworks\\MLCode\\backend\\micro_services\\.env' });
+config();
 
 export default {
   PORT: process.env.PORT!,
-  DATABASE_URI: process.env.DATABASE_URI!,
-  DATABASE_USER: process.env.DATABASE_USER!,
-  DATABASE_PASSWORD: process.env.DATABASE_PASSWORD!,
-  DATABASE_NAME: process.env.DATABASE_NAME!,
+  POSTGRES_HOST: process.env.POSTGRES_HOST!,
+  POSTGRES_URI: `postgresql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:5432/${process.env.POSTGRES_DB}`,
+  POSTGRES_USER: process.env.POSTGRES_USER!,
+  POSTGRES_PASSWORD: process.env.POSTGRES_PASSWORD!,
+  POSTGRES_DB: process.env.POSTGRES_DB!,
   MINIO_ACCESS_KEY: process.env.MINIO_ACCESS_KEY!,
   MINIO_SECRET_KEY: process.env.MINIO_SECRET_KEY!,
   MINIO_ENDPOINT: process.env.MINIO_ENDPOINT!,
@@ -22,13 +23,14 @@ export default {
   ANSWERS_BUCKET_NAME: 'answers',
   LOG_LEVEL: process.env.LOG_LEVEL || 'info',
   JWT_SECRET: process.env.JWT_SECRET!,
-  JWT_ISSUER: process.env.JWT_ISSUER || 'auth-service',
+  JWT_ISSUER: process.env.JWT_ISSUER || 'api-gateway',
   CLERK_PUBLISHABLE_KEY: process.env.CLERK_PUBLISHABLE_KEY!,
   CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY!,
   SERVICES: {
     'problem-service': process.env.PROBLEM_SERVICE_URL!,
     'api-gateway-service': process.env.API_GATEWAY_SERVICE_URL!,
     'submission-service': process.env.SUBMISSION_SERVICE_URL!,
+    'container-service': process.env.CONTAINER_SERVICE_URL!,
   },
   CURRENT_SERVICE: process.env.CURRENT_SERVICE!,
 };

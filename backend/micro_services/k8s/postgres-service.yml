@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: postgres
+  namespace: mlcode
+spec:
+  type: ClusterIP
+  selector:
+    app: postgres-pod
+  ports:
+    - port: 5432
+      targetPort: 5432

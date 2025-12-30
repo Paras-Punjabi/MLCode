@@ -3,7 +3,7 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 
 const db = drizzle({
   connection: {
-    connectionString: config.DATABASE_URI,
+    connectionString: config.POSTGRES_URI,
   },
 });
 

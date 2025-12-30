@@ -1,6 +1,6 @@
 services:
   notebook:
-    build: .
+    image: paraspunjabi2002/mlcode_notebook:1.0.0
     container_name: notebook
     depends_on:
       minio:
@@ -9,8 +9,8 @@ services:
       OBJECT_STORE_URI: "minio:9000"
       ACCESS_KEY: root
       SECRET_KEY: password
-      USER_ID: paras
-      PROBLEM_ID: pandas
+      USER_ID: PP
+      PROBLEM_ID: numpy
     ports:
       - "8888:8888"
     networks:
@@ -41,4 +41,4 @@ volumes:
 
 networks:
   jpt_notebook_net:
-    driver: bridge 
+    driver: bridge

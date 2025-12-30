@@ -1,4 +1,3 @@
-import { sql } from 'drizzle-orm';
 import { pgTable, uuid, text, varchar, pgEnum } from 'drizzle-orm/pg-core';
 
 export const problemLevelEnum = pgEnum('problemLevel', [
@@ -28,9 +27,7 @@ export const usersTable = pgTable('users', {
   userId: uuid().defaultRandom().primaryKey(),
   userName: varchar('user_name', { length: 15 }).notNull(),
   userEmail: varchar('user_email', { length: 255 }).unique().notNull(),
-  userRoles: userRoleEnum('user_roles')
-    .array()
-    .default(sql`ARRAY['USER']::user_role[]`),
+  userRoles: userRoleEnum('user_roles').notNull().default('USER'),
 });
 
 export const submissionsTable = pgTable('submissions', {
@@ -61,7 +58,8 @@ export const problemSessionsTable = pgTable('problem_sessions', {
   sessionId: uuid('session_id').defaultRandom().primaryKey(),
   userId: uuid('user_id')
     .references(() => usersTable.userId)
-    .notNull(),
+    .notNull()
+    .unique(),
   problemId: uuid('problem_id')
     .references(() => problemsTable.problemId)
     .notNull(),

@@ -1,9 +1,11 @@
-import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import db from '../../database/connector';
 import { submissionsTable } from '../../database/schema';
 import { and, eq } from 'drizzle-orm';
 import { KafkaProducer, MessageType } from './kafka.service';
 import config from '../../configs/dotenv.config';
+
+type InsertedSubmissionType = typeof submissionsTable.$inferSelect;
+type StatusType = NonNullable<InsertedSubmissionType['status']> | undefined;
 
 const producer = new KafkaProducer(
   {
@@ -15,13 +17,8 @@ const producer = new KafkaProducer(
 producer.connect();
 
 class SubmissionService {
-  private db: NodePgDatabase;
-  constructor() {
-    this.db = db;
-  }
-
   async addPendingSubmission(userId: string, problemId: string) {
-    let [data] = await this.db
+    let [data] = await db
       .insert(submissionsTable)
       .values({ userId, problemId, status: 'PENDING' })
       .returning();
@@ -36,7 +33,7 @@ class SubmissionService {
     expected = undefined,
   }: {
     submissionId: string;
-    status: 'ACCEPTED' | 'ATTEMPTED' | 'PENDING' | 'FAILED' | undefined;
+    status: StatusType;
     input: string | undefined;
     output: string | undefined;
     expected: string | undefined;
@@ -47,7 +44,7 @@ class SubmissionService {
     if (output) updateObj['output'] = output;
     if (expected) updateObj['expected'] = expected;
 
-    await this.db
+    await db
       .update(submissionsTable)
       .set(updateObj)
       .where(eq(submissionsTable.submissionId, submissionId));
@@ -56,7 +53,7 @@ class SubmissionService {
   async getSubmissions(userId: string, problemId: string | undefined) {
     let data = null;
     if (problemId) {
-      data = await this.db
+      data = await db
         .select()
         .from(submissionsTable)
         .where(
@@ -66,7 +63,7 @@ class SubmissionService {
           )
         );
     } else {
-      data = await this.db
+      data = await db
         .select()
         .from(submissionsTable)
         .where(eq(submissionsTable.userId, userId));

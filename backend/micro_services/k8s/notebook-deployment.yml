@@ -1,0 +1,50 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: notebook-deployment-<%= SESSION_ID %>
+  namespace: mlcode 
+spec:
+  replicas: 1 
+  selector:
+    matchLabels:
+      app: notebook-pod
+
+  template:
+    metadata:
+      labels:
+        app: notebook-pod
+        
+    spec:
+      containers:
+      - name: notebook
+        image: paraspunjabi2002/mlcode_notebook:1.0.0 
+        env:
+        - name: ACCESS_KEY
+          valueFrom:
+            configMapKeyRef:
+              name: mlcode-config
+              key: MINIO_ACCESS_KEY
+        - name: SECRET_KEY
+          valueFrom:
+            configMapKeyRef:
+              name: mlcode-config
+              key: MINIO_SECRET_KEY
+        - name: USER_ID
+          value: <%= USER_ID %>
+        - name: PROBLEM_ID
+          value: <%= PROBLEM_ID %>
+        - name: OBJECT_STORE_URI
+          valueFrom:
+            configMapKeyRef:
+              name: mlcode-config
+              key: MINIO_ENDPOINT
+        ports:
+        - containerPort: 8888
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+

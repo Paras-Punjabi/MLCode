@@ -22,16 +22,17 @@ class FilesHandler(FileSystemEventHandler):
 
     def get_all_files(self,path):
         files = []
-        def solve(path):
+        
+        def recursive_traverse(path):
             if(".ipynb_checkpoints" in path or os.path.basename(path).startswith(".~")):
                 return
             if(os.path.isfile(path)):
                 files.append(path)
                 return
             for item in os.listdir(path):
-                solve(os.path.join(path,item))
-        solve(path)
-        
+                recursive_traverse(os.path.join(path,item))
+
+        recursive_traverse(path)
         return files
     
     def on_modified(self, event):

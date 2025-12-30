@@ -11,11 +11,11 @@ sys.stdout.reconfigure(line_buffering=True)
 os.environ["PYTHONUNBUFFERED"] = "1"
 
 #* ENV & CONSTANT Variables
-OBJECT_STORE_URI = os.getenv("OBJECT_STORE_URI","localhost:9000")
-ACCESS_KEY = os.getenv("ACCESS_KEY","root")
-SECRET_KEY = os.getenv("SECRET_KEY","password")
-USER_ID = os.getenv("USER_ID","paras")
-PROBLEM_ID = os.getenv("PROBLEM_ID","pandas")
+OBJECT_STORE_URI = os.getenv("OBJECT_STORE_URI")
+ACCESS_KEY = os.getenv("ACCESS_KEY")
+SECRET_KEY = os.getenv("SECRET_KEY")
+USER_ID = os.getenv("USER_ID")
+PROBLEM_ID = os.getenv("PROBLEM_ID")
 NOTEBOOK_BUCKET_NAME = "notebooks"
 DATASET_BUCKET_NAME = "datasets"
 WATCH_DIR = "/app/code"

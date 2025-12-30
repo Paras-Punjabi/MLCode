@@ -7,7 +7,7 @@ export default defineConfig({
   dialect: 'postgresql',
   casing: 'snake_case',
   dbCredentials: {
-    url: config.DATABASE_URI as string,
+    url: config.POSTGRES_URI as string,
   },
   verbose: true,
   strict: true,
