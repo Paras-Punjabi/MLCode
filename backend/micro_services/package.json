@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsx watch app.ts",
     "start": "tsx app.ts",
-    "submissionConsumer": "tsx ./submission-service/kafka/consumer.ts",
+    "submission-consumer": "tsx ./submission-service/kafka/consumer.ts",
     "db:generate": "drizzle-kit generate --config ./database/drizzle.ts",
     "db:migrate": "drizzle-kit migrate --config ./database/drizzle.ts",
     "db:push": "drizzle-kit push --config ./database/drizzle.ts"
@@ -38,6 +38,7 @@
   "devDependencies": {
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
+    "@types/ejs": "^3.1.5",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/morgan": "^1.9.10",

@@ -1,0 +1,111 @@
+#! Minio StorageClass
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: minio-storage
+  namespace: mlcode
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
+
+---
+
+#! Minio PersistentVolume 
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: minio-pv
+  namespace: mlcode
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: minio-storage
+  hostPath:
+    path: /mnt/data/minio
+    type: DirectoryOrCreate
+    
+---
+
+#! Minio PersistentVolumeClaim 
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: minio-pvc
+  namespace: mlcode
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: minio-storage
+
+--- 
+
+#! Minio Deployment 
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: minio-deployment
+  namespace: mlcode
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minio-pod
+  template:
+    metadata:
+      labels:
+        app: minio-pod
+    spec:
+      containers:
+        - name: minio
+          image: minio/minio:latest
+          args:
+            - server
+            - /data
+            - "--console-address=:9090"
+          envFrom:
+          - configMapRef:
+              name: mlcode-config
+          ports:
+            - containerPort: 9000
+            - containerPort: 9090
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          volumeMounts:
+            - name: minio-data
+              mountPath: /data
+      volumes:
+        - name: minio-data
+          persistentVolumeClaim:
+            claimName: minio-pvc
+
+---
+
+#! Minio Service
+kind: Service
+apiVersion: v1
+metadata:
+  name: minio
+  namespace: mlcode
+spec:
+  type: ClusterIP
+  selector:
+    app: minio-pod
+  ports:
+    - name: api
+      port: 9000
+      targetPort: 9000
+    - name: console
+      port: 9090
+      targetPort: 9090
+

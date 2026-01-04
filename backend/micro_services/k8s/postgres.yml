@@ -1,0 +1,101 @@
+#! Postgres StorageClass
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: postgres-storage
+  namespace: mlcode
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
+
+---
+
+#! Postgres PersistentVolume 
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: postgres-pv
+  namespace: mlcode
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: postgres-storage
+  hostPath:
+    path: /mnt/data/postgres
+    type: DirectoryOrCreate
+
+---
+
+#! Postgres PersistentVolumeClaim 
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: postgres-pvc
+  namespace: mlcode
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: postgres-storage
+    
+---
+
+#! Postgres Deployment
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: postgres-deployment
+  namespace: mlcode
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-pod
+  template:
+    metadata:
+      labels:
+        app: postgres-pod
+    spec:
+      containers:
+        - name: postgres
+          image: postgres
+          envFrom:
+          - configMapRef:
+              name: mlcode-config
+          ports:
+            - containerPort: 5432
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: postgres-pvc
+
+---
+
+#! Postgres Service
+kind: Service
+apiVersion: v1
+metadata:
+  name: postgres
+  namespace: mlcode
+spec:
+  type: ClusterIP
+  selector:
+    app: postgres-pod
+  ports:
+    - port: 5432
+      targetPort: 5432

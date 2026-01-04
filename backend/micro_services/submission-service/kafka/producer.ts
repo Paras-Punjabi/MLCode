@@ -1,9 +1,11 @@
 import { KafkaProducer, MessageType } from '../services/kafka.service';
 import config from '../../configs/dotenv.config';
+import { Partitioners } from 'kafkajs';
 
 const producer = new KafkaProducer(
   {
     allowAutoTopicCreation: true,
+    createPartitioner: Partitioners.LegacyPartitioner,
   },
   config.KAFKA_TOPIC
 );

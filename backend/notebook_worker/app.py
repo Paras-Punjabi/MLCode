@@ -11,9 +11,9 @@ sys.stdout.reconfigure(line_buffering=True)
 os.environ["PYTHONUNBUFFERED"] = "1"
 
 #* ENV & CONSTANT Variables
-OBJECT_STORE_URI = os.getenv("OBJECT_STORE_URI")
-ACCESS_KEY = os.getenv("ACCESS_KEY")
-SECRET_KEY = os.getenv("SECRET_KEY")
+MINIO_ENDPOINT = os.getenv("MINIO_ENDPOINT")
+MINIO_ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY")
+MINIO_SECRET_KEY = os.getenv("MINIO_SECRET_KEY")
 USER_ID = os.getenv("USER_ID")
 PROBLEM_ID = os.getenv("PROBLEM_ID")
 NOTEBOOK_BUCKET_NAME = "notebooks"
@@ -109,5 +109,5 @@ class NotebookContainer:
         t2.join()
 
 if __name__ == '__main__':
-    notebook = NotebookContainer(OBJECT_STORE_URI,ACCESS_KEY,SECRET_KEY,USER_ID,PROBLEM_ID,NOTEBOOK_BUCKET_NAME,DATASET_BUCKET_NAME,WATCH_DIR,DATASET_DIR)
+    notebook = NotebookContainer(MINIO_ENDPOINT,MINIO_ACCESS_KEY,MINIO_SECRET_KEY,USER_ID,PROBLEM_ID,NOTEBOOK_BUCKET_NAME,DATASET_BUCKET_NAME,WATCH_DIR,DATASET_DIR)
     notebook.run()

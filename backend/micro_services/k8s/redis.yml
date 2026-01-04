@@ -1,0 +1,101 @@
+#! Redis StorageClass
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: redis-storage
+  namespace: mlcode
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
+
+---
+
+#!Redis PersistentVolume
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: redis-pv
+  namespace: mlcode
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: redis-storage
+  hostPath:
+    path: /mnt/data/redis
+    type: DirectoryOrCreate
+  
+---
+
+#! Redis PersistentVolumeClaim
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: redis-pvc
+  namespace: mlcode
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: redis-storage
+    
+---
+
+#! Redis Deployment 
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: redis-deployment
+  namespace: mlcode
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis-pod
+  template:
+    metadata:
+      labels:
+        app: redis-pod
+    spec:
+      containers:
+        - name: redis
+          image: redis:latest
+          envFrom:
+          - configMapRef:
+              name: mlcode-config
+          ports:
+            - containerPort: 6379
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          volumeMounts:
+            - name: redis-data
+              mountPath: /data
+      volumes:
+        - name: redis-data
+          persistentVolumeClaim:
+            claimName: redis-pvc
+
+---
+
+#! Redis Service
+kind: Service
+apiVersion: v1
+metadata:
+  name: redis
+  namespace: mlcode
+spec:
+  type: ClusterIP
+  selector:
+    app: redis-pod
+  ports:
+    - port: 6379
+      targetPort: 6379
