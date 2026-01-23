@@ -17,9 +17,11 @@ export const authMiddleware = (
     return next();
   } catch (err) {
     if (err instanceof JsonWebTokenError) {
-      res.status(401).json({ message: 'Token expired!' });
+      res.status(401).json({ success: false, message: 'Token expired!' });
     } else {
-      next(err);
+      res
+        .status(500)
+        .json({ success: false, message: 'Internal Server error', error: err });
     }
   }
 };

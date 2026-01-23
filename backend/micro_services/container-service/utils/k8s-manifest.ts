@@ -20,7 +20,7 @@ export function getDeploymentManifestJSON(
         matchLabels: {
           app: `notebook-pod-${sessionId}`,
           pod: 'mlcode-pod',
-          sessionId: sessionId
+          sessionId: sessionId,
         },
       },
       template: {
@@ -28,14 +28,14 @@ export function getDeploymentManifestJSON(
           labels: {
             app: `notebook-pod-${sessionId}`,
             pod: 'mlcode-pod',
-            sessionId: sessionId
+            sessionId: sessionId,
           },
         },
         spec: {
           containers: [
             {
               name: `notebook-pod-${sessionId}`,
-              image: config.NOTEBOOK_DOCKER,
+              image: config.NOTEBOOK_DOCKER_IMAGE,
               imagePullPolicy: 'Always',
               env: [
                 {
@@ -98,7 +98,7 @@ export function getServiceManifestJSON(
       selector: {
         app: `notebook-pod-${sessionId}`,
         pod: 'mlcode-pod',
-        sessionId: sessionId
+        sessionId: sessionId,
       },
       ports: [
         {

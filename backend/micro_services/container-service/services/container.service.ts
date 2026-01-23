@@ -13,7 +13,11 @@ export default class ContainerService {
 
   constructor() {
     this.k8sClient = new k8s.KubeConfig();
-    this.k8sClient.loadFromDefault();
+    if (config.DEVELOPMENT_MODE == 'local') {
+      this.k8sClient.loadFromDefault();
+    } else {
+      this.k8sClient.loadFromCluster();
+    }
     this.namespace = config.NAMESPACE;
     this.coreV1API = this.k8sClient.makeApiClient(k8s.CoreV1Api);
     this.appsV1API = this.k8sClient.makeApiClient(k8s.AppsV1Api);
@@ -88,8 +92,9 @@ export default class ContainerService {
 
 (async () => {
   let obj = new ContainerService();
-  // await obj.startNotebookPod('test', 'paras', 'sklearn');
-  // await obj.stopNotebokPod('test');
-  // console.log(await obj.getNotebookPodStatus('test'));
-  console.log(await obj.getAllNotebookPods());
+  // await obj.startNotebookPod('testing', 'chandrasekhar', 'nodejs');
+  // console.log('Pod Initiated');
+  await obj.stopNotebookPod('testing');
+  // console.log(await obj.getNotebookPodStatus('b7a3fd0d-7fa8-4d18-b8ab-f5b8d056d1a1'));
+  // console.log(await obj.getAllNotebookPods());
 })();

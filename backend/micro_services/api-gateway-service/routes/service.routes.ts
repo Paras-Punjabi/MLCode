@@ -13,14 +13,34 @@ if (SERVICES['problem-service']) {
     createProxyMiddleware({
       target: SERVICES['problem-service'],
       changeOrigin: true,
+      ws: true,
     })
   );
 }
 
 router.use(authMiddleware);
+
 // protected services here
-router.get('/test-auth', (_req, res) => {
-  return res.json({ message: 'protected routes work', success: true });
-});
+if (SERVICES['submission-service']) {
+  router.use(
+    '/submissions',
+    createProxyMiddleware({
+      target: SERVICES['submission-service'],
+      changeOrigin: true,
+      ws: true,
+    })
+  );
+}
+
+if (SERVICES['container-service']) {
+  router.use(
+    '/containers',
+    createProxyMiddleware({
+      target: SERVICES['container-service'],
+      changeOrigin: true,
+      ws: true,
+    })
+  );
+}
 
 export default router;

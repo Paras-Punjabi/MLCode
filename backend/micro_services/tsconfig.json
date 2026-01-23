@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    /* Language and runtime */
+    "target": "es2024",
+    "lib": ["ES2024"],
+
+    /* Module system */
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+
+    /* Project structure */
+    "rootDir": ".",
+    "outDir": "dist",
+
+    /* Interop & imports */
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+
+    /* Type checking */
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+
+    /* Dev experience */
+    "sourceMap": true
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}

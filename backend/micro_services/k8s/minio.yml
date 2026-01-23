@@ -1,3 +1,15 @@
+#! Minio Config Map
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: minio-config
+  namespace: mlcode
+data:
+  MINIO_ACCESS_KEY: root
+  MINIO_SECRET_KEY: password
+
+---
+
 #! Minio StorageClass
 kind: StorageClass
 apiVersion: storage.k8s.io/v1
@@ -70,7 +82,7 @@ spec:
             - "--console-address=:9090"
           envFrom:
           - configMapRef:
-              name: mlcode-config
+              name: minio-config
           ports:
             - containerPort: 9000
             - containerPort: 9090

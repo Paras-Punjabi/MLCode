@@ -1,3 +1,17 @@
+#! Postgres ConfigMap
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: postgres-config
+  namespace: mlcode
+data:
+  POSTGRES_PASSWORD: password
+  POSTGRES_USER: root
+  POSTGRES_DB: mlcode
+  POSTGRES_HOST: postgres
+
+---
+
 #! Postgres StorageClass
 kind: StorageClass
 apiVersion: storage.k8s.io/v1
@@ -66,7 +80,7 @@ spec:
           image: postgres
           envFrom:
           - configMapRef:
-              name: mlcode-config
+              name: postgres-config
           ports:
             - containerPort: 5432
           resources:

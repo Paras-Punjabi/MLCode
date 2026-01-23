@@ -17,12 +17,11 @@ const consumer = new KafkaConsumer(
 
 async function consumeMessageCallback(payload: EachMessagePayload) {
   let payloadData = JSON.parse(payload.message.value?.toString() as string);
-  // let pipeline = new VerifySubmissionPipeline(
-  //   payloadData['userId'],
-  //   payloadData['problemId']
-  // );
-  // await pipeline.runPipeline();
-  console.log(payloadData);
+  let pipeline = new VerifySubmissionPipeline(
+    payloadData['userId'],
+    payloadData['problemId']
+  );
+  await pipeline.runPipeline();
   await consumer.commit({
     partition: payload.partition,
     topic: payload.topic,

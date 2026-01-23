@@ -64,9 +64,6 @@ spec:
       containers:
         - name: redis
           image: redis:latest
-          envFrom:
-          - configMapRef:
-              name: mlcode-config
           ports:
             - containerPort: 6379
           resources:

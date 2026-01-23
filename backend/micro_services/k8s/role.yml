@@ -1,0 +1,9 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: mlcode-pod-manager-role
+  namespace: mlcode
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["*"]

@@ -5,7 +5,8 @@
   "main": "app.ts",
   "scripts": {
     "dev": "tsx watch app.ts",
-    "start": "tsx app.ts",
+    "build": "tsc",
+    "start": "node dist/app.js",
     "submission-consumer": "tsx ./submission-service/kafka/consumer.ts",
     "db:generate": "drizzle-kit generate --config ./database/drizzle.ts",
     "db:migrate": "drizzle-kit migrate --config ./database/drizzle.ts",
@@ -21,12 +22,10 @@
     "csv-parser": "^3.2.0",
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.45.0",
-    "ejs": "^3.1.10",
     "express": "^5.2.1",
     "express-winston": "^4.2.0",
     "http-proxy-middleware": "^3.0.5",
     "ioredis": "^5.8.2",
-    "js-yaml": "^4.1.1",
     "jsonwebtoken": "^9.0.3",
     "kafkajs": "^2.2.4",
     "minio": "^8.0.6",
@@ -49,5 +48,8 @@
     "prettier": "^3.7.4",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=21.0.0"
   }
 }

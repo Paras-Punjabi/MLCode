@@ -5,9 +5,6 @@ import { clerkClient, getAuth } from '@clerk/express';
 
 const userService = new UserService();
 
-export const validateInternalToken = (_req: Request, res: Response) => {
-  res.status(200).json({ success: true, message: 'Token is valid' });
-};
 
 export const tokenRefresh = async (req: Request, res: Response) => {
   // verify clerk session
