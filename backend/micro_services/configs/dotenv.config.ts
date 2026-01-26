@@ -45,7 +45,7 @@ export default {
   CURRENT_SERVICE: process.env.CURRENT_SERVICE!,
 
   NAMESPACE: process.env.NAMESPACE! || 'mlcode',
-  NOTEBOOK_DOCKER_IMAGE: 'paraspunjabi2002/mlcode_notebook:1.0.0',
+  NOTEBOOK_DOCKER_IMAGE: 'paraspunjabi2002/mlcode_notebook:1.1.0',
 
   DEVELOPMENT_MODE: process.env.DEVELOPMENT_MODE! || 'local', // 'local' || 'production'
 };

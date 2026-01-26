@@ -29,6 +29,8 @@ export function getDeploymentManifestJSON(
             app: `notebook-pod-${sessionId}`,
             pod: 'mlcode-pod',
             sessionId: sessionId,
+            userId: userId,
+            problemId: problemId,
           },
         },
         spec: {
@@ -63,6 +65,10 @@ export function getDeploymentManifestJSON(
                 {
                   name: 'PROBLEM_ID',
                   value: problemId,
+                },
+                {
+                  name: 'SESSION_ID',
+                  value: sessionId,
                 },
                 {
                   name: 'MINIO_ENDPOINT',

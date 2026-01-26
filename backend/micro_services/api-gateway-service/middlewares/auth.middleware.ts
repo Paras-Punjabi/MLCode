@@ -1,27 +1,42 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import { verifyInternalJwt } from '../utils/jwt.utils';
 import { JsonWebTokenError } from 'jsonwebtoken';
 
-export const authMiddleware = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  // parse tokens
-  const authHeader = req.headers.authorization;
-  const [tokenType, bearerToken] = authHeader?.split(' ') || [];
-  if (tokenType !== 'bearer') return next(Error('Bearer token not found'));
+export const authorizeToken = (authorization: string | undefined) => {
+  if (!authorization)
+    return {
+      success: false,
+      message: 'Bearer token not found',
+      statusCode: 401,
+    };
 
+  const [tokenType, bearerToken] = authorization?.split(' ') || [];
+  if (tokenType !== 'Bearer')
+    return {
+      success: false,
+      message: 'Bearer token not found',
+      statusCode: 401,
+    };
   try {
-    verifyInternalJwt(bearerToken);
-    return next();
+    const payload = verifyInternalJwt(bearerToken);
+    return { success: true, message: 'Token is valid', statusCode: 200 };
   } catch (err) {
     if (err instanceof JsonWebTokenError) {
-      res.status(401).json({ success: false, message: 'Token expired!' });
+      return { success: false, message: 'Token expired!', statusCode: 401 };
     } else {
-      res
-        .status(500)
-        .json({ success: false, message: 'Internal Server error', error: err });
+      return {
+        success: false,
+        message: 'Internal Server error',
+        error: err,
+        statusCode: 500,
+      };
     }
   }
+};
+
+export const authMiddleware = (req: Request, res: Response) => {
+  const { success, statusCode, message, error } = authorizeToken(
+    req.headers.authorization
+  );
+  res.status(statusCode).json({ success, message, error });
 };

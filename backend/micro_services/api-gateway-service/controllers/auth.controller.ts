@@ -5,7 +5,6 @@ import { clerkClient, getAuth } from '@clerk/express';
 
 const userService = new UserService();
 
-
 export const tokenRefresh = async (req: Request, res: Response) => {
   // verify clerk session
   const { isAuthenticated, userId } = getAuth(req);
@@ -20,10 +19,15 @@ export const tokenRefresh = async (req: Request, res: Response) => {
   }
 
   const internalJwt = generateInternalJwt(authUser);
-  res.status(200).json({
-    success: true,
-    token: internalJwt,
-  });
+  res
+    .cookie('access_token', internalJwt, {
+      maxAge: 1000 * 60 * 15,
+    })
+    .status(200)
+    .json({
+      success: true,
+      token: internalJwt,
+    });
 };
 
 export const tokenExchange = async (req: Request, res: Response) => {
@@ -48,8 +52,13 @@ export const tokenExchange = async (req: Request, res: Response) => {
   });
 
   const internalJwt = generateInternalJwt(authUser);
-  res.status(200).json({
-    success: true,
-    token: internalJwt,
-  });
+  res
+    .cookie('access_token', internalJwt, {
+      maxAge: 1000 * 60 * 15,
+    })
+    .status(200)
+    .json({
+      success: true,
+      token: internalJwt,
+    });
 };

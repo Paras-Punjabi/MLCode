@@ -24,7 +24,7 @@ export const problemsTable = pgTable('problems', {
 });
 
 export const usersTable = pgTable('users', {
-  userId: uuid().defaultRandom().primaryKey(),
+  userId: varchar('user_id', { length: 50 }).primaryKey().notNull(),
   userName: varchar('user_name', { length: 15 }).notNull(),
   userEmail: varchar('user_email', { length: 255 }).unique().notNull(),
   userRoles: userRoleEnum('user_roles').notNull().default('USER'),
@@ -32,7 +32,7 @@ export const usersTable = pgTable('users', {
 
 export const submissionsTable = pgTable('submissions', {
   submissionId: uuid('submission_id').defaultRandom().primaryKey(),
-  userId: uuid('user_id')
+  userId: varchar('user_id')
     .references(() => usersTable.userId)
     .notNull(),
   problemId: uuid('problem_id')
@@ -46,20 +46,9 @@ export const submissionsTable = pgTable('submissions', {
 
 export const notebooksTable = pgTable('notebooks', {
   notebookId: uuid('notebook_id').defaultRandom().primaryKey(),
-  userId: uuid('user_id')
+  userId: varchar('user_id')
     .references(() => usersTable.userId)
     .notNull(),
-  problemId: uuid('problem_id')
-    .references(() => problemsTable.problemId)
-    .notNull(),
-});
-
-export const problemSessionsTable = pgTable('problem_sessions', {
-  sessionId: uuid('session_id').defaultRandom().primaryKey(),
-  userId: uuid('user_id')
-    .references(() => usersTable.userId)
-    .notNull()
-    .unique(),
   problemId: uuid('problem_id')
     .references(() => problemsTable.problemId)
     .notNull(),

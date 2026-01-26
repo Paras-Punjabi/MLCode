@@ -14,6 +14,7 @@ os.environ["PYTHONUNBUFFERED"] = "1"
 MINIO_ENDPOINT = os.getenv("MINIO_ENDPOINT")
 MINIO_ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY")
 MINIO_SECRET_KEY = os.getenv("MINIO_SECRET_KEY")
+SESSION_ID = os.getenv("SESSION_ID")
 USER_ID = os.getenv("USER_ID")
 PROBLEM_ID = os.getenv("PROBLEM_ID")
 NOTEBOOK_BUCKET_NAME = "notebooks"
@@ -22,12 +23,13 @@ WATCH_DIR = "/app/code"
 DATASET_DIR = "/app/dataset"
 
 class NotebookContainer:
-    def __init__(self,endpoint,access_key,secret_key,user_id,problem_id,notebook_bucket_name,dataset_bucket_name,watch_dir,dataset_dir):
+    def __init__(self,endpoint,access_key,secret_key,session_id,user_id,problem_id,notebook_bucket_name,dataset_bucket_name,watch_dir,dataset_dir):
         self.endpoint = endpoint
         self.access_key = access_key
         self.secret_key = secret_key
         self.user_id = user_id
         self.problem_id = problem_id
+        self.session_id = session_id
         self.notebook_bucket_name = notebook_bucket_name
         self.dataset_bucket_name = dataset_bucket_name
         self.watch_dir = watch_dir
@@ -60,18 +62,18 @@ class NotebookContainer:
         
     def run_jupyter(self):
         notebook_path = os.path.join(self.watch_dir,"main.ipynb") 
+        
         while(not os.path.exists(notebook_path)):
             time.sleep(1)
+        
+        command = ["jupyter", "notebook","--ServerApp.token=", "--ip=0.0.0.0", "--no-browser", "--allow-root"]
 
-        subprocess.run([
-            "jupyter", 
-            "notebook",
-            "--NotebookApp.token=", 
-            "--ip=0.0.0.0", 
-            "--no-browser", 
-            "--allow-root", 
-            notebook_path
-        ],check=True)   
+        if self.session_id:
+            command.append(f"--ServerApp.base_url=/notebook/{self.session_id}")
+        
+        command.append(notebook_path)
+        
+        subprocess.run(command,check=True)   
     
     def pull_dataset_from_object_store(self):
         dataset_object_path = f"{self.problem_id}/"
@@ -109,5 +111,5 @@ class NotebookContainer:
         t2.join()
 
 if __name__ == '__main__':
-    notebook = NotebookContainer(MINIO_ENDPOINT,MINIO_ACCESS_KEY,MINIO_SECRET_KEY,USER_ID,PROBLEM_ID,NOTEBOOK_BUCKET_NAME,DATASET_BUCKET_NAME,WATCH_DIR,DATASET_DIR)
+    notebook = NotebookContainer(MINIO_ENDPOINT,MINIO_ACCESS_KEY,MINIO_SECRET_KEY,SESSION_ID,USER_ID,PROBLEM_ID,NOTEBOOK_BUCKET_NAME,DATASET_BUCKET_NAME,WATCH_DIR,DATASET_DIR)
     notebook.run()

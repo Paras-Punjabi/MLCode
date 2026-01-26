@@ -1,26 +1,54 @@
-import config from '../configs/dotenv.config';
-import express from 'express';
-import cors from 'cors';
-import cookieParser from 'cookie-parser';
-import { clerkMiddleware } from '@clerk/express';
-import routes from './routes';
-import serviceRoutes from './routes/service.routes';
+import httpProxy from 'http-proxy';
+import http from 'http';
+import expressApp from './expressApp';
+import { verifySession } from './utils/clerk.utils';
 
-const app = express();
+const server = http.createServer();
 
-app.use(cors());
-app.use(
-  clerkMiddleware({
-    secretKey: config.CLERK_SECRET_KEY,
-    publishableKey: config.CLERK_PUBLISHABLE_KEY,
-  })
+const notebookProxyServer = httpProxy.createProxyServer({
+  ws: true,
+  changeOrigin: false,
+});
+
+server.on(
+  'request',
+  async (req: http.IncomingMessage, res: http.ServerResponse) => {
+    if (req.url?.startsWith('/notebook')) {
+      const reqURLArray = req.url.split('/');
+      const authResponse = await verifySession(req);
+
+      if (authResponse.success && reqURLArray.length >= 2) {
+        const sessionId = reqURLArray[2];
+        notebookProxyServer.web(req, res, {
+          target: 'http://localhost:8888', // `http://notebook-service-${sessionId}:8888`
+        });
+      } else {
+        res.writeHead(authResponse.statusCode, {
+          'Content-Type': 'text/plain',
+        });
+        res.write(JSON.stringify(authResponse));
+        res.end();
+      }
+    } else {
+      expressApp(req, res);
+    }
+  }
 );
 
-// Service Routes want raw request object
-app.use('/services', serviceRoutes);
+server.on('upgrade', async (req, socket, head) => {
+  if (req.url?.startsWith('/notebook')) {
+    const reqURLArray = req.url.split('/');
+    const { success } = await verifySession(req);
 
-app.use(express.json());
-app.use(cookieParser());
-app.use(routes);
+    if (success && reqURLArray.length >= 2) {
+      const sessionId = reqURLArray[2];
+      notebookProxyServer.ws(req, socket, head, {
+        target: 'http://localhost:8888', // `http://notebook-service-${sessionId}:8888`
+      });
+    } else {
+      socket.destroy();
+    }
+  }
+});
 
-export default app;
+export default server;

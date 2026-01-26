@@ -1,7 +1,9 @@
 import config from './dotenv.config';
-import { createClerkClient } from '@clerk/express';
+import { createClerkClient } from '@clerk/backend';
 
-export const clerkClient = createClerkClient({
+const clerkClient = createClerkClient({
   secretKey: config.CLERK_SECRET_KEY,
   publishableKey: config.CLERK_PUBLISHABLE_KEY,
 });
+
+export default clerkClient;

@@ -69,6 +69,29 @@ export default class ContainerService {
     };
   }
 
+  async getSession(userId: string) {
+    let data = await this.coreV1API.listNamespacedPod({
+      namespace: this.namespace,
+      labelSelector: `userId=${userId}`,
+    });
+
+    let sessions: {
+      userId: string | undefined;
+      problemId: string | undefined;
+      sessionId: string | undefined;
+    }[] = [];
+
+    data.items.forEach((item) => {
+      sessions.push({
+        sessionId: item.metadata?.labels?.['sessionId'],
+        userId: item.metadata?.labels?.['userId'],
+        problemId: item.metadata?.labels?.['problemId'],
+      });
+    });
+
+    return sessions;
+  }
+
   async getAllNotebookPods() {
     let data = await this.coreV1API.listNamespacedPod({
       namespace: this.namespace,
@@ -92,9 +115,9 @@ export default class ContainerService {
 
 (async () => {
   let obj = new ContainerService();
-  // await obj.startNotebookPod('testing', 'chandrasekhar', 'nodejs');
-  // console.log('Pod Initiated');
-  await obj.stopNotebookPod('testing');
-  // console.log(await obj.getNotebookPodStatus('b7a3fd0d-7fa8-4d18-b8ab-f5b8d056d1a1'));
-  // console.log(await obj.getAllNotebookPods());
+  await obj.startNotebookPod('test', 'paras', 'nodejs');
+  // await obj.stopNotebookPod('test');
+  // const ans = await obj.getSession('chandrasekhar');
+  // console.log(ans);
+  // await obj.stopNotebookPod('test');
 })();
