@@ -2,7 +2,7 @@ import config from '../configs/dotenv.config';
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import { clerkMiddleware, getAuth } from '@clerk/express';
+import { clerkMiddleware } from '@clerk/express';
 import routes from './routes';
 import serviceRoutes from './routes/service.routes';
 

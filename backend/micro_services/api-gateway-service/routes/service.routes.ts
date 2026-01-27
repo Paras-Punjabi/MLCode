@@ -1,46 +1,23 @@
-import { Router } from 'express';
-import { createProxyMiddleware } from 'http-proxy-middleware';
-import config from '../../configs/dotenv.config';
+import { Router, Request, Response } from 'express';
 import { authMiddleware } from '../middlewares/auth.middleware';
+import {
+  containerServiceProxyServer,
+  problemServiceProxyServer,
+  submissionServiceProxyServer,
+} from '../services/proxy.service';
 
 const router = Router();
-const { SERVICES } = config;
 
-// public service (problem service)
-if (SERVICES['problem-service']) {
-  router.use(
-    '/problems',
-    createProxyMiddleware({
-      target: SERVICES['problem-service'],
-      changeOrigin: true,
-      ws: true,
-    })
-  );
-}
+router.use('/problems', (req: Request, res: Response) => {
+  problemServiceProxyServer.web(req, res);
+});
 
-router.use(authMiddleware);
+router.use('/submissions', authMiddleware, (req: Request, res: Response) => {
+  submissionServiceProxyServer.web(req, res);
+});
 
-// protected services here
-if (SERVICES['submission-service']) {
-  router.use(
-    '/submissions',
-    createProxyMiddleware({
-      target: SERVICES['submission-service'],
-      changeOrigin: true,
-      ws: true,
-    })
-  );
-}
-
-if (SERVICES['container-service']) {
-  router.use(
-    '/containers',
-    createProxyMiddleware({
-      target: SERVICES['container-service'],
-      changeOrigin: true,
-      ws: true,
-    })
-  );
-}
+router.use('/containers', authMiddleware, (req: Request, res: Response) => {
+  containerServiceProxyServer.web(req, res);
+});
 
 export default router;

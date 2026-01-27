@@ -1,14 +1,9 @@
-import httpProxy from 'http-proxy';
 import http from 'http';
 import expressApp from './expressApp';
 import { verifySession } from './utils/clerk.utils';
+import { notebookProxyServer } from './services/proxy.service';
 
 const server = http.createServer();
-
-const notebookProxyServer = httpProxy.createProxyServer({
-  ws: true,
-  changeOrigin: false,
-});
 
 server.on(
   'request',
