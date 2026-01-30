@@ -1,5 +1,5 @@
 const Home = () => {
-  return <></>;
+  return <>Welcome to MLCode</>;
 };
 
 export default Home;
