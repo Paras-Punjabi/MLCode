@@ -1,6 +1,7 @@
 import db from '../../database/connector';
 import { usersTable as users } from '../../database/schema';
 import { eq, sql } from 'drizzle-orm';
+import clerkClient from '../../configs/clerk.config';
 
 export type InsertedUserType = typeof users.$inferInsert;
 export type SelectedUserType = typeof users.$inferSelect;
@@ -96,6 +97,23 @@ class UserService {
 
     return updatedUser;
   }
+
+  async getUserDetailsFromClerk(username: string) {
+    let data = await clerkClient.users.getUserList({
+      username: ['hello_paras_100'],
+    });
+    if (!data.totalCount) return null;
+    const userDetails = data['data'][0];
+    return {
+      imageUrl: userDetails.imageUrl,
+      hasImage: userDetails.hasImage,
+      username: userDetails.username,
+      firstName: userDetails.firstName,
+      lastName: userDetails.lastName,
+    };
+  }
 }
 
 export default UserService;
+
+new UserService().getUserDetailsFromClerk('paras');
