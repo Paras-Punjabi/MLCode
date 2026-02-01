@@ -30,7 +30,7 @@ class UserService {
       .select()
       .from(users)
       .where(eq(users.userId, userId));
-    return user || null;
+    return user as typeof user | null;
   }
 
   /**
@@ -100,7 +100,7 @@ class UserService {
 
   async getUserDetailsFromClerk(username: string) {
     let data = await clerkClient.users.getUserList({
-      username: ['hello_paras_100'],
+      username: [username],
     });
     if (!data.totalCount) return null;
     const userDetails = data['data'][0];
@@ -115,5 +115,3 @@ class UserService {
 }
 
 export default UserService;
-
-new UserService().getUserDetailsFromClerk('paras');

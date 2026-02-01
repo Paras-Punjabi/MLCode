@@ -1,16 +1,15 @@
 import config from '../configs/dotenv.config';
 import express from 'express';
 import cors from 'cors';
-import cookieParser from 'cookie-parser';
 import { clerkMiddleware } from '@clerk/express';
 import routes from './routes';
-import serviceRoutes from './routes/service.routes';
+import errorMiddleware from './middlewares/error.middleware';
 
 const app = express();
 
 app.use(
   cors({
-    origin: ['*'],
+    origin: [config.FRONTEND_URL],
     credentials: true,
   })
 );
@@ -22,11 +21,8 @@ app.use(
   })
 );
 
-app.use('/services', serviceRoutes);
-
-app.use(express.json());
-app.use(cookieParser());
-
 app.use(routes);
+
+app.use(errorMiddleware);
 
 export default app;

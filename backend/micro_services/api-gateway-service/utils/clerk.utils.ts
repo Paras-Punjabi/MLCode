@@ -1,6 +1,5 @@
 import clerkClient from '../../configs/clerk.config';
 import http from 'http';
-import { parseCookie } from 'cookie';
 
 function incomingMessagetoWebRequest(req: http.IncomingMessage): Request {
   const proto = (req.headers['x-forwarded-proto'] as string) || 'http';
@@ -15,12 +14,6 @@ function incomingMessagetoWebRequest(req: http.IncomingMessage): Request {
 
 export async function verifySession(req: http.IncomingMessage) {
   try {
-    // const cookies = parseCookie(req.headers.cookie as string);
-    // const sessionId = cookies.clerk_active_context;
-    // const session = await clerkClient.sessions.getSession(
-    //   sessionId.split(":")[0]
-    // );
-
     const request = incomingMessagetoWebRequest(req);
     const session = await clerkClient.authenticateRequest(request);
 

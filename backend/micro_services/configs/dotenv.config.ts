@@ -44,6 +44,8 @@ export default {
   },
   CURRENT_SERVICE: process.env.CURRENT_SERVICE!,
 
+  FRONTEND_URL: process.env.FRONTEND_URL!,
+
   NAMESPACE: process.env.NAMESPACE! || 'mlcode',
   NOTEBOOK_DOCKER_IMAGE: 'paraspunjabi2002/mlcode_notebook:1.1.0',
 

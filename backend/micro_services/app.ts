@@ -1,7 +1,7 @@
 import problemServiceApp from './problem-service/app';
 import apiGatewayServiceApp from './api-gateway-service/app';
 import submissionServiceApp from './submission-service/app';
-import containerServiceApp from './container-service/app'
+import containerServiceApp from './container-service/app';
 import config from './configs/dotenv.config';
 
 let serviceAppMapping = {

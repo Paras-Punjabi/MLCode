@@ -10,7 +10,7 @@ router.get('/', getProblems);
 
 router.get('/id/:problem_id', getProblemById);
 
-router.get('/health', (req: Request, res: Response) => {
+router.get('/health', (_req: Request, res: Response) => {
   try {
     res
       .status(200)
