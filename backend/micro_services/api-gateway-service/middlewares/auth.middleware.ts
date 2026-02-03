@@ -7,9 +7,10 @@ export const authMiddleware = async (
   _res: Response,
   next: NextFunction
 ) => {
-  const { isAuthenticated, userId } = getAuth(req);
+  const { isAuthenticated, userId, sessionClaims } = getAuth(req);
   if (isAuthenticated && userId) {
     req.userId = userId;
+    req.isMLCodeUser = sessionClaims.metadata.isMLCodeUser;
     return next();
   }
 

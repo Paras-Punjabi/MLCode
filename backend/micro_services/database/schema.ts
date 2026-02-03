@@ -25,9 +25,6 @@ export const problemsTable = pgTable('problems', {
 
 export const usersTable = pgTable('users', {
   userId: varchar('user_id', { length: 50 }).primaryKey().notNull(),
-  userName: varchar('user_name', { length: 15 }).notNull(),
-  userEmail: varchar('user_email', { length: 255 }).unique().notNull(),
-  userRoles: userRoleEnum('user_roles').notNull().default('USER'),
 });
 
 export const submissionsTable = pgTable('submissions', {

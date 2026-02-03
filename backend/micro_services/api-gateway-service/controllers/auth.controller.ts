@@ -1,12 +1,13 @@
 import { Request, Response } from 'express';
 import UserService from '../services/user.service';
-import { clerkClient } from '@clerk/express';
 import ApiError from '../../utils/error.utils';
+import clerkClient from '../../configs/clerk.config';
 
 const userService = new UserService();
 
 export const syncUser = async (req: Request, res: Response) => {
-  const userId = req.userId;
+  const { userId, isMLCodeUser } = req;
+
   if (!userId)
     throw new ApiError({
       message: 'User not logged in',
@@ -14,19 +15,20 @@ export const syncUser = async (req: Request, res: Response) => {
       statusCode: 500,
     });
 
-  const clerkUser = await clerkClient.users.getUser(userId);
-  if (!clerkUser.username || !clerkUser.primaryEmailAddress)
-    return res.status(400).json({
-      success: false,
-      message: 'No username and/or email is associated with this account',
+  if (isMLCodeUser)
+    return res.status(200).json({
+      success: true,
+      message: 'Profile already exists',
     });
 
-  // update user (so that any changes in clerk stays in sync with auth service)
-  const updatedUser = await userService.upsert({
-    userId: clerkUser.id,
-    userName: clerkUser.username,
-    userEmail: clerkUser.primaryEmailAddress.emailAddress,
-  });
-
-  res.status(200).json({ success: true, updatedUser });
+  try {
+    await userService.upsert({ userId });
+    await clerkClient.users.updateUserMetadata(userId, {
+      publicMetadata: { isMLCodeUser: true },
+    });
+    res.status(200).json({
+      success: true,
+      message: 'MLCode Profile created successfully',
+    });
+  } catch (error) {}
 };
