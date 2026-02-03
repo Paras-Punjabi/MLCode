@@ -22,8 +22,8 @@ import { Button } from "@/components/ui/button";
 
 const Banner = () => (
   <div className="flex flex-row gap-2 items-center">
-    <Image src="/mlcode-thick.svg" width={64} height={64} alt="MLCode Icon" />
-    <span className="font-bold text-2xl bg-linear-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+    <Image src="/mlcode-new.svg" width={48} height={48} alt="MLCode Icon" />
+    <span className="font-semibold tracking-wide text-2xl bg-linear-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
       MLCode
     </span>
   </div>
@@ -35,14 +35,14 @@ const links = [
 ]
 
 const Navbar = () => (
-  <div>
-    <div className="container mx-auto flex px-6 py-2 items-center justify-between">
-      <Link href={"/"}>
+  <div className="page-gutter-x">
+    <div className="flex py-3 items-center justify-between">
+      <Link href="/">
         <Banner />
       </Link>
       <nav className="flex flex-wrap items-center text-xl justify-center gap-8">
         {links.map(({ label, href }) => (
-          <Link key={label + href} href={href} className="text-sm font-semibold tracking-widest uppercase relative before:absolute before:content-[''] before:top-full before:w-full before:h-0.5 before:origin-top before:bg-transparent hover:before:bg-current/50 before:transition-colors">
+          <Link key={label + href} href={href} className="nav-link">
             {label}
           </Link>
         ))}

@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { FaUser } from "react-icons/fa";
 import { SlNotebook } from "react-icons/sl";
-import { Toaster } from "@/components/ui/sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import UserProfile from "@/components/UserProfile";
@@ -28,8 +27,7 @@ const AccountSettings = () => {
 
   return (
     <>
-      <Toaster />
-      <div className="from-slate-900 via-purple-900 to-slate-900 p-8">
+      <div className="from-slate-900 via-purple-900 to-slate-900 page-gutter-x page-container">
         <div className="max-w-6xl mx-auto">
           <div className="mb-6">
             <h1 className="text-4xl font-bold text-white mb-2">
