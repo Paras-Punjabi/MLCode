@@ -30,5 +30,11 @@ export const syncUser = async (req: Request, res: Response) => {
       success: true,
       message: 'MLCode Profile created successfully',
     });
-  } catch (error) {}
+  } catch (error) {
+    throw new ApiError({
+      statusCode: 500,
+      errorSource: 'Auth',
+      message: 'An error occured while login. Please try again!',
+    });
+  }
 };

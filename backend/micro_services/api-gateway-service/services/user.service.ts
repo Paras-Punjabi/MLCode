@@ -1,11 +1,10 @@
 import db from '../../database/connector';
 import { usersTable as users } from '../../database/schema';
-import { eq, sql } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import clerkClient from '../../configs/clerk.config';
 
 export type InsertedUserType = typeof users.$inferInsert;
 export type SelectedUserType = typeof users.$inferSelect;
-export type RoleType = NonNullable<InsertedUserType['userRoles']>[number];
 
 class UserService {
   constructor(private database = db) {}
@@ -60,42 +59,6 @@ class UserService {
       .where(eq(users.userId, userId));
 
     return result.rowCount ? result.rows[0] : null;
-  }
-
-  /**
-   * Assign a role to a user with userId
-   *
-   * @param userId
-   * @returns Updated user
-   */
-  async assignRole(userId: string, role: RoleType) {
-    const [udpatedUser] = await this.database
-      .update(users)
-      .set({
-        userRoles: sql`array_append(${users.userRoles}, '${role}')`,
-      })
-      .where(eq(users.userId, userId))
-      .returning();
-
-    return udpatedUser;
-  }
-
-  /**
-   * Revoke a role from a user with userId
-   *
-   * @param userId
-   * @returns Updated user
-   */
-  async revokeRole(userId: string, role: RoleType) {
-    const [updatedUser] = await this.database
-      .update(users)
-      .set({
-        userRoles: sql`array_remove(${users.userRoles}, '${role}')`,
-      })
-      .where(eq(users.userId, userId))
-      .returning();
-
-    return updatedUser;
   }
 
   async getUserDetailsFromClerk(username: string) {
