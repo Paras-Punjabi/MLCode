@@ -30,12 +30,12 @@ const Banner = () => (
 )
 
 const links = [
-  { label: "Problems", href: "/" },
+  { label: "Problems", href: "/problemset" },
   { label: "Features", href: "/" },
 ]
 
 const Navbar = () => (
-  <div className="page-gutter-x">
+  <div className="page-gutter-x px-4">
     <div className="flex py-3 items-center justify-between">
       <Link href="/">
         <Banner />

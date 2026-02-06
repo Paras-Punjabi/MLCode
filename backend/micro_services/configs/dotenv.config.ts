@@ -17,24 +17,25 @@ export default {
   MINIO_PORT: process.env.MINIO_PORT! || '9000',
 
   REDIS_URI: process.env.REDIS_URI!,
-  REDIS_SORTED_SET_NAME: 'problems_set',
-  REDIS_HASHSET_NAME: 'problems_hset',
+  REDIS_SORTED_SET_NAME: process.env.REDIS_SORTED_SET_NAME! || 'problems_set',
+  REDIS_HASHSET_NAME: process.env.REDIS_HASHSET_NAME! || 'problems_hset',
 
   KAFKA_BROKERS: process.env.KAFKA_BROKERS!,
-  KAFKA_TOPIC: 'submissions',
+  KAFKA_TOPIC: process.env.KAFKA_TOPIC! || 'submissions',
 
-  NOTEBOOKS_BUCKET_NAME: 'notebooks',
-  DATASETS_BUCKET_NAME: 'datasets',
-  ANSWERS_BUCKET_NAME: 'answers',
+  NOTEBOOKS_BUCKET_NAME: process.env.NOTEBOOKS_BUCKET_NAME! || 'notebooks',
+  DATASETS_BUCKET_NAME: process.env.DATASETS_BUCKET_NAME! || 'datasets',
+  ANSWERS_BUCKET_NAME: process.env.ANSWERS_BUCKET_NAME! || 'answers',
 
   LOG_LEVEL: process.env.LOG_LEVEL! || 'info',
 
-  JWT_SECRET: process.env.JWT_SECRET! || '0f92b685-b6cc-4c4d-864a-94f8eb63cdcc',
-
-  JWT_ISSUER: process.env.JWT_ISSUER! || 'api-gateway',
-
   CLERK_PUBLISHABLE_KEY: process.env.CLERK_PUBLISHABLE_KEY!,
   CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY!,
+  CLERK_ORGANIZATION_ID: process.env.CLERK_ORGANIZATION_ID!,
+  CLERK_MEMBER_ROLE: process.env.CLERK_MEMBER_ROLE! || 'org:member',
+  CLERK_PRO_MEMBER_ROLE: process.env.CLERK_PRO_MEMBER_ROLE! || 'org:pro_member',
+  CLERK_ADMIN_ROLE: process.env.CLERK_ADMIN_ROLE! || 'org:admin',
+  CLERK_USER_ROLE: process.env.CLERK_USER_ROLE! || 'org:user',
 
   SERVICES: {
     'problem-service': process.env.PROBLEM_SERVICE_URL!,
@@ -47,7 +48,9 @@ export default {
   FRONTEND_URL: process.env.FRONTEND_URL!,
 
   NAMESPACE: process.env.NAMESPACE! || 'mlcode',
-  NOTEBOOK_DOCKER_IMAGE: 'paraspunjabi2002/mlcode_notebook:1.1.0',
+  NOTEBOOK_DOCKER_IMAGE:
+    process.env.NOTEBOOK_DOCKER_IMAGE! ||
+    'paraspunjabi2002/mlcode_notebook:1.1.0',
 
   DEVELOPMENT_MODE: process.env.DEVELOPMENT_MODE! || 'local', // 'local' || 'production'
 };

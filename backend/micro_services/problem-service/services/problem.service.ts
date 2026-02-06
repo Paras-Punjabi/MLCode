@@ -13,30 +13,29 @@ export default class ProblemService {
     console.log('Redis Connected');
   }
 
-  async getProblems(page: number, limit: number) {
+  async getProblemsCount() {
     let totalProblemsCache = await this.redisCache.get('total_problems');
-    let totalPages = 0,
-      totalProblems;
+    if (totalProblemsCache) return parseInt(totalProblemsCache);
+    let totalProblems;
+    let totalProblemsResult = await db
+      .select({ count: count() })
+      .from(problemsTable);
 
-    if (totalProblemsCache == null) {
-      let totalProblemsResult = await db
-        .select({ count: count() })
-        .from(problemsTable);
+    if (totalProblemsResult.length > 0) {
+      totalProblems = totalProblemsResult[0].count;
 
-      if (totalProblemsResult.length > 0) {
-        totalProblems = totalProblemsResult[0].count;
-        totalPages = Math.ceil(totalProblems / limit);
+      await this.redisCache.set(
+        'total_problems',
+        300,
+        totalProblems.toString()
+      );
+    } else totalProblems = 0;
+    return totalProblems;
+  }
 
-        await this.redisCache.set(
-          'total_problems',
-          300,
-          totalProblems.toString()
-        );
-      }
-    } else {
-      totalProblems = parseInt(totalProblemsCache);
-      totalPages = Math.ceil(totalProblems / limit);
-    }
+  async getProblems(page: number, limit: number) {
+    let totalProblems = await this.getProblemsCount();
+    let totalPages = Math.ceil(totalProblems / limit);
 
     let data = await db
       .select()
@@ -47,14 +46,14 @@ export default class ProblemService {
     return { data, totalProblems, totalPages };
   }
 
-  async getProblemById(problemId: string) {
-    let data = await this.lfuRedis.get(problemId);
+  async getProblemBySlug(problemSlug: string) {
+    let data = await this.lfuRedis.get(problemSlug);
     if (data == null) {
       data = await db
         .select()
         .from(problemsTable)
-        .where(eq(problemsTable.problemId, problemId));
-      await this.lfuRedis.push(problemId, data);
+        .where(eq(problemsTable.problemSlug, problemSlug));
+      await this.lfuRedis.push(problemSlug, data);
     }
     return data;
   }

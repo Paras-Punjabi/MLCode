@@ -1,4 +1,11 @@
-import { pgTable, uuid, text, varchar, pgEnum } from 'drizzle-orm/pg-core';
+import {
+  pgTable,
+  uuid,
+  text,
+  varchar,
+  pgEnum,
+  serial,
+} from 'drizzle-orm/pg-core';
 
 export const problemLevelEnum = pgEnum('problemLevel', [
   'EASY',
@@ -13,10 +20,10 @@ export const statusEnum = pgEnum('status', [
   'FAILED',
 ]);
 
-export const userRoleEnum = pgEnum('user_role', ['USER', 'ADMIN']);
-
 export const problemsTable = pgTable('problems', {
-  problemId: uuid('problem_id').defaultRandom().primaryKey(),
+  problemSlug: text('problem_slug').notNull().primaryKey(),
+  problemId: uuid('problem_id').defaultRandom().unique(),
+  problemNumber: serial('problem_number').unique(),
   problemName: text('problem_name').notNull(),
   problemDesc: text('problem_desc').notNull(),
   problemTags: varchar('problem_tags'), // comma seperated tags,

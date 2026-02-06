@@ -1,4 +1,4 @@
-import { DrizzleQueryError, eq, count } from 'drizzle-orm';
+import { DrizzleQueryError } from 'drizzle-orm';
 import { Request, Response } from 'express';
 import ProblemService from '../services/problem.service';
 
@@ -8,13 +8,12 @@ export async function getProblems(req: Request, res: Response) {
   try {
     let queryParams = req.query;
     let page = 1,
-      limit = 2;
+      limit = 50;
 
-    if (
-      queryParams['page'] !== undefined &&
-      queryParams['limit'] !== undefined
-    ) {
+    if (queryParams['page'] !== undefined) {
       page = parseInt(queryParams['page'] as string);
+    }
+    if (queryParams['limit'] !== undefined) {
       limit = parseInt(queryParams['limit'] as string);
     }
 
@@ -47,13 +46,13 @@ export async function getProblems(req: Request, res: Response) {
   }
 }
 
-export async function getProblemById(req: Request, res: Response) {
+export async function getProblemBySlug(req: Request, res: Response) {
   try {
-    let problemId: string = req.params.problem_id;
-    let data = await problemService.getProblemById(problemId);
+    let problemId: string = req.params.problem_slug;
+    let data = await problemService.getProblemBySlug(problemId);
     res.status(200).json({
       success: true,
-      data,
+      data: data.length > 0 ? data[0] : null,
       message: `Problem Data with problem_id ${problemId}`,
     });
   } catch (err) {

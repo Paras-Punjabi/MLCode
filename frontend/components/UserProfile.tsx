@@ -105,7 +105,7 @@ const UserProfile = ({ user }: { user: UserResource }) => {
       <div className="flex-1 space-y-6">
         <Card className="bg-slate-800/50 border-slate-700">
           <CardHeader>
-            <CardTitle className="text-white text-2xl">User Profile</CardTitle>
+            <CardTitle className="text-white tracking-wide uppercase text-2xl">User Profile</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-start gap-8 mb-6">
@@ -122,7 +122,7 @@ const UserProfile = ({ user }: { user: UserResource }) => {
                 />
                 <button className="absolute bottom-0 right-0 w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center hover:bg-purple-700 transition-colors">
                   <Camera
-                    className="w-5 h-5 text-white"
+                    className="w-5 h-5 text-white cursor-pointer"
                     onClick={() => {
                       if (fileRef) fileRef.current?.click();
                     }}

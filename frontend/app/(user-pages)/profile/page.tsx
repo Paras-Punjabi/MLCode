@@ -1,21 +1,21 @@
 "use client";
-import { useEffect } from "react";
-import { useUser } from "@clerk/nextjs";
+import { useUser, RedirectToSignIn } from "@clerk/nextjs";
+import Loader from "@/components/Loader";
 import { FaUser } from "react-icons/fa";
 import { SlNotebook } from "react-icons/sl";
 import { Card, CardContent } from "@/components/ui/card";
-import { useRouter } from "next/navigation";
 import UserProfile from "@/components/UserProfile";
 
 const AccountSettings = () => {
   const { user, isLoaded, isSignedIn } = useUser();
-  const router = useRouter();
 
-  useEffect(() => {
-    if (isLoaded && !isSignedIn) {
-      router.push("/");
-    }
-  }, [isLoaded, isSignedIn, router]);
+  if (!isSignedIn && isLoaded) {
+    return <RedirectToSignIn />;
+  }
+
+  if (!isLoaded) {
+    return <Loader />;
+  }
 
   if (!isLoaded) {
     return (

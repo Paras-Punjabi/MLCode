@@ -1,14 +1,14 @@
 import { Router, Request, Response } from 'express';
 import {
-  getProblemById,
+  getProblemBySlug,
   getProblems,
-} from '../controllers/problem.controller.js';
+} from '../controllers/problem.controller';
 
 const router = Router();
 
 router.get('/', getProblems);
 
-router.get('/id/:problem_id', getProblemById);
+router.get('/:problem_slug', getProblemBySlug);
 
 router.get('/health', (_req: Request, res: Response) => {
   try {
