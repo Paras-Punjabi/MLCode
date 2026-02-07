@@ -38,10 +38,24 @@ const ProblemLink = ({ problem, idx }: { problem: Problem; idx: number }) => {
         <span className="text-white truncate">{problem.problemName}</span>
       </div>
 
-      <div
-        className={`flex items-center justify-center w-20 font-medium ${getDifficultyColor(problem.problemLevel)}`}
-      >
-        {problem.problemLevel}
+      <div className="flex items-center justify-between gap-6">
+        <div>
+          {problem.problemTags.split(",").map((item, i) => {
+            return (
+              <span
+                className="mx-1 text-sm bg-gray-700 py-1 px-2 uppercase rounded-md"
+                key={i}
+              >
+                {item}
+              </span>
+            );
+          })}
+        </div>
+        <span
+          className={`w-20 font-medium ${getDifficultyColor(problem.problemLevel)}`}
+        >
+          {problem.problemLevel}
+        </span>
       </div>
     </Link>
   );
@@ -67,7 +81,7 @@ export default function ProblemSet() {
   }
 
   if (data && data.data.length == 0 && page !== 1) {
-    router.push(`problemset?page=1`);
+    return router.push("/problemset");
   }
 
   return (

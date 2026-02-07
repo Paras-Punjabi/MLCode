@@ -5,7 +5,7 @@ export function getDeploymentManifestJSON(
   namespace: string,
   sessionId: string,
   userId: string,
-  problemId: string
+  problemSlug: string
 ): V1Deployment {
   return {
     kind: 'Deployment',
@@ -13,6 +13,11 @@ export function getDeploymentManifestJSON(
     metadata: {
       name: `notebook-deployment-${sessionId}`,
       namespace: namespace,
+      labels: {
+        sessionId: sessionId,
+        userId: userId,
+        problemSlug: problemSlug,
+      },
     },
     spec: {
       replicas: 1,
@@ -30,7 +35,7 @@ export function getDeploymentManifestJSON(
             pod: 'mlcode-pod',
             sessionId: sessionId,
             userId: userId,
-            problemId: problemId,
+            problemSlug: problemSlug,
           },
         },
         spec: {
@@ -64,7 +69,7 @@ export function getDeploymentManifestJSON(
                 },
                 {
                   name: 'PROBLEM_ID',
-                  value: problemId,
+                  value: problemSlug,
                 },
                 {
                   name: 'SESSION_ID',
@@ -90,7 +95,9 @@ export function getDeploymentManifestJSON(
 
 export function getServiceManifestJSON(
   namespace: string,
-  sessionId: string
+  sessionId: string,
+  userId: string,
+  problemSlug: string
 ): V1Service {
   return {
     apiVersion: 'v1',
@@ -98,6 +105,11 @@ export function getServiceManifestJSON(
     metadata: {
       name: `notebook-service-${sessionId}`,
       namespace: namespace,
+      labels: {
+        sessionId: sessionId,
+        userId: userId,
+        problemSlug: problemSlug,
+      },
     },
     spec: {
       type: 'ClusterIP',
@@ -105,6 +117,8 @@ export function getServiceManifestJSON(
         app: `notebook-pod-${sessionId}`,
         pod: 'mlcode-pod',
         sessionId: sessionId,
+        userId: userId,
+        problemSlug: problemSlug,
       },
       ports: [
         {

@@ -23,15 +23,24 @@ export default class ContainerService {
     this.appsV1API = this.k8sClient.makeApiClient(k8s.AppsV1Api);
   }
 
-  async startNotebookPod(sessionId: string, userId: string, problemId: string) {
+  async startNotebookPod(
+    sessionId: string,
+    userId: string,
+    problemSlug: string
+  ) {
     let deploymentManifest = getDeploymentManifestJSON(
       this.namespace,
       sessionId,
       userId,
-      problemId
+      problemSlug
     );
 
-    let serviceManifest = getServiceManifestJSON(this.namespace, sessionId);
+    let serviceManifest = getServiceManifestJSON(
+      this.namespace,
+      sessionId,
+      userId,
+      problemSlug
+    );
 
     await this.appsV1API.createNamespacedDeployment({
       namespace: this.namespace,
@@ -70,14 +79,14 @@ export default class ContainerService {
   }
 
   async getSession(userId: string) {
-    let data = await this.coreV1API.listNamespacedPod({
+    let data = await this.coreV1API.listNamespacedService({
       namespace: this.namespace,
       labelSelector: `userId=${userId}`,
     });
 
     let sessions: {
       userId: string | undefined;
-      problemId: string | undefined;
+      problemSlug: string | undefined;
       sessionId: string | undefined;
     }[] = [];
 
@@ -85,7 +94,7 @@ export default class ContainerService {
       sessions.push({
         sessionId: item.metadata?.labels?.['sessionId'],
         userId: item.metadata?.labels?.['userId'],
-        problemId: item.metadata?.labels?.['problemId'],
+        problemSlug: item.metadata?.labels?.['problemSlug'],
       });
     });
 
@@ -115,9 +124,9 @@ export default class ContainerService {
 
 (async () => {
   let obj = new ContainerService();
-  await obj.startNotebookPod('test', 'paras', 'nodejs');
+  // await obj.startNotebookPod('test', 'paras', 'nodejs');
   // await obj.stopNotebookPod('test');
-  // const ans = await obj.getSession('chandrasekhar');
+  // const ans = await obj.getSession('user_39JaZbn502KgzP0L7s6SsreuTbS');
   // console.log(ans);
   // await obj.stopNotebookPod('test');
 })();

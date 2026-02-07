@@ -7,3 +7,9 @@ export interface Problem {
   problemTags: string;
   problemLevel: string;
 }
+
+export interface ProblemSession {
+  userId: string | undefined;
+  problemSlug: string | undefined;
+  sessionId: string | undefined;
+}

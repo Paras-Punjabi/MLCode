@@ -21,7 +21,7 @@ export async function getCurrentSession(req: Request, res: Response) {
 
 export async function requestSession(req: Request, res: Response) {
   try {
-    let { userId, problemId } = req.body;
+    let { userId, problemSlug } = req.body;
     let data = await containerService.getSession(userId);
     if (data.length > 0) {
       return res
@@ -31,16 +31,16 @@ export async function requestSession(req: Request, res: Response) {
     const sessionDetails = {
       sessionId: crypto.randomUUID(),
       userId,
-      problemId,
+      problemSlug,
     };
     await containerService.startNotebookPod(
       sessionDetails.sessionId,
       userId,
-      problemId
+      problemSlug
     );
     res.status(201).json({
       success: true,
-      message: 'Session Started',
+      message: `Session Started for ${problemSlug}`,
       data: sessionDetails,
     });
   } catch (err) {
@@ -52,18 +52,25 @@ export async function requestSession(req: Request, res: Response) {
 
 export async function deleteSession(req: Request, res: Response) {
   try {
-    let { userId } = req.body;
+    let { userId, problemSlug } = req.body;
     let data = await containerService.getSession(userId);
     if (data.length == 0) {
       return res
         .status(404)
         .json({ success: false, message: 'Session does not exists' });
     }
-    let sessionDetails = data[0];
-    await containerService.stopNotebookPod(sessionDetails.sessionId || '');
+    let sessionDetails = data.filter(
+      (item) => item.problemSlug === problemSlug && item.userId === userId
+    );
+    if (sessionDetails.length === 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: 'Session does not exists' });
+    }
+    await containerService.stopNotebookPod(sessionDetails[0].sessionId || '');
     res.status(202).json({
       success: true,
-      message: 'Session Stopped',
+      message: `Session Stopped for ${problemSlug}`,
       data: sessionDetails,
     });
   } catch (err) {

@@ -1,9 +1,14 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { MdOpenInNew } from "react-icons/md";
 import { AiOutlineCloudUpload } from "react-icons/ai";
-import { type Problem } from "@/lib/types";
-import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
+import { ProblemSession, type Problem } from "@/lib/types";
+import { SignedIn, SignedOut, SignInButton, useUser } from "@clerk/nextjs";
 import ReactMarkdown from "react-markdown";
+import useAxios from "@/hooks/useAxios";
+import axiosInstance from "@/configs/axios.config";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 const getDifficultyColor = (problemLevel: string) => {
   switch (problemLevel) {
@@ -19,6 +24,65 @@ const getDifficultyColor = (problemLevel: string) => {
 };
 
 const ProblemDetails = ({ problem }: { problem: Problem }) => {
+  const { user, isSignedIn, isLoaded } = useUser();
+  const [isSessionActive, setIsSessionActive] = useState<
+    "loading" | "active" | "not-active"
+  >("loading");
+  const [{}, fetchCurrentSessions] = useAxios(
+    {
+      url: `/services/containers/currentSession`,
+      method: "POST",
+    },
+    { manual: true, useCache: true, autoCancel: false },
+  );
+
+  useEffect(() => {
+    if (!isSignedIn && isLoaded) return;
+    if (!isLoaded || !user.id) return;
+    (async () => {
+      const { data } = await fetchCurrentSessions({
+        data: { userId: user.id },
+      });
+      const inactive =
+        data.data.filter(
+          (item: ProblemSession) => item.problemSlug === problem.problemSlug,
+        ).length === 0;
+      setIsSessionActive(inactive ? "not-active" : "active");
+    })();
+  }, [isSignedIn, user, isLoaded, fetchCurrentSessions, problem.problemSlug]);
+
+  const requestSession = async () => {
+    const { data: sessionData } = await axiosInstance.post(
+      "/services/containers/requestSession",
+      {
+        userId: user?.id,
+        problemSlug: problem.problemSlug,
+      },
+    );
+    if (sessionData.success) {
+      toast.success(sessionData.message);
+      setIsSessionActive("active");
+    } else {
+      toast.error(sessionData.message);
+    }
+  };
+
+  const deleteSession = async () => {
+    const { data: sessionData } = await axiosInstance.post(
+      "/services/containers/deleteSession",
+      {
+        userId: user?.id,
+        problemSlug: problem.problemSlug,
+      },
+    );
+    if (sessionData.success) {
+      toast.success(sessionData.message);
+      setIsSessionActive("not-active");
+    } else {
+      toast.error(sessionData.message);
+    }
+  };
+
   return (
     <div className="backdrop-blur-custom border border-white/10 shadow-2xl p-8 rounded-2xl mt-3 w-[95%] mx-auto">
       <div className="flex items-start justify-between mb-6">
@@ -66,13 +130,25 @@ const ProblemDetails = ({ problem }: { problem: Problem }) => {
               <span>Submit</span>
               <AiOutlineCloudUpload />
             </Button>
-            <Button
-              variant={"secondary"}
-              className="cursor-pointer flex items-center gap-2"
-            >
-              <span className="flex items-center">Start Session</span>
-              <MdOpenInNew className="self-center" />
-            </Button>
+            {isSessionActive === "not-active" && (
+              <Button
+                variant={"secondary"}
+                onClick={requestSession}
+                className="cursor-pointer flex items-center gap-2"
+              >
+                <span className="flex items-center">Start Session</span>
+                <MdOpenInNew className="self-center" />
+              </Button>
+            )}
+            {isSessionActive === "active" && (
+              <Button
+                onClick={deleteSession}
+                className="bg-red-800 hover:bg-red-900 text-white cursor-pointer"
+              >
+                <span className="flex items-center">Stop Session</span>
+                <MdOpenInNew className="self-center" />
+              </Button>
+            )}
           </SignedIn>
           <SignedOut>
             <SignInButton>

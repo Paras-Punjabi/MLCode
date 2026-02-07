@@ -33,11 +33,21 @@ const Problem = async (props: PageProps<"/problems/[problemSlug]">) => {
             </SignedIn>
           </TabsList>
         </div>
-        <TabsContent value="Problem Statement">
+        <TabsContent
+          value="Problem Statement"
+          forceMount
+          className="data-[state=inactive]:hidden"
+        >
           <ProblemDetails problem={problem} />
         </TabsContent>
         <SignedIn>
-          <TabsContent value="Submissions"></TabsContent>
+          <TabsContent
+            value="Submissions"
+            forceMount
+            className="data-[state=inactive]:hidden"
+          >
+            <span>Submissions Tab</span>
+          </TabsContent>
         </SignedIn>
       </Tabs>
     </>
