@@ -1,62 +1,57 @@
 import db from '../../database/connector';
-import { usersTable as users } from '../../database/schema';
-import { eq } from 'drizzle-orm';
+import { usersTable } from '../../database/schema';
+import { eq, count } from 'drizzle-orm';
 import clerkClient from '../../configs/clerk.config';
+import { RedisCache } from '../../problem-service/services/redis.service';
 
-export type InsertedUserType = typeof users.$inferInsert;
-export type SelectedUserType = typeof users.$inferSelect;
+export type InsertedUserType = typeof usersTable.$inferInsert;
+export type SelectedUserType = typeof usersTable.$inferSelect;
 
 class UserService {
-  constructor(private database = db) {}
+  private redisCache: RedisCache;
 
-  /**
-   * Find all users in database
-   *
-   * @returns Users
-   */
+  constructor() {
+    this.redisCache = new RedisCache();
+  }
   async findAll() {
-    return await this.database.select().from(users);
+    return await db.select().from(usersTable);
   }
 
-  /**
-   * Find user by userId
-   *
-   * @param userId - User ID provided from IdP
-   * @returns User or null if user not signed up
-   */
-  async findById(userId: string) {
-    const [user] = await this.database
-      .select()
-      .from(users)
-      .where(eq(users.userId, userId));
-    return user as typeof user | null;
+  async getUsersById(userIds: string[]) {
+    const data = await clerkClient.users.getUserList({
+      userId: userIds,
+    });
+    let usersDetails: {
+      [key: string]: {
+        username: string | null;
+        email: string | undefined;
+        name: string | null;
+      };
+    } = {};
+
+    data.data.forEach((item) => {
+      usersDetails[item.id] = {
+        username: item.username,
+        email: item.primaryEmailAddress?.emailAddress,
+        name: item.firstName + ' ' + item.lastName,
+      };
+    });
+    return usersDetails;
   }
 
-  /**
-   * Insert or update user if exists
-   *
-   * @param user
-   * @returns Inserted/updated user
-   */
   async upsert(user: InsertedUserType) {
-    const [result] = await this.database
-      .insert(users)
+    const [result] = await db
+      .insert(usersTable)
       .values(user)
-      .onConflictDoUpdate({ target: users.userId, set: user })
+      .onConflictDoUpdate({ target: usersTable.userId, set: user })
       .returning();
     return result;
   }
 
-  /**
-   * Delete a user given its userId
-   *
-   * @param userId
-   * @returns user deleted or null if not deleted
-   */
   async delete(userId: string) {
-    const result = await this.database
-      .delete(users)
-      .where(eq(users.userId, userId));
+    const result = await db
+      .delete(usersTable)
+      .where(eq(usersTable.userId, userId));
 
     return result.rowCount ? result.rows[0] : null;
   }
@@ -73,7 +68,19 @@ class UserService {
       username: userDetails.username,
       firstName: userDetails.firstName,
       lastName: userDetails.lastName,
+      createdAt: userDetails.createdAt,
     };
+  }
+
+  async getTotalUsers() {
+    const cacheData = await this.redisCache.get('total_users');
+    if (cacheData) return parseInt(cacheData);
+    let data = await db.select({ count: count() }).from(usersTable);
+    if (data.length > 0) {
+      this.redisCache.set('total_users', 300, data[0].count.toString());
+      return data[0].count;
+    }
+    return 0;
   }
 }
 

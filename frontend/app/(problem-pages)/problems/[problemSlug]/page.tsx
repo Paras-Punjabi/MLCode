@@ -1,17 +1,38 @@
+"use client";
 import ProblemDetails from "@/components/ProblemDetails";
 import { Tabs, TabsContent, TabsTrigger, TabsList } from "@/components/ui/tabs";
-import axiosInstance from "@/configs/axios.config";
 import { type Problem } from "@/lib/types";
-import { notFound } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import { SignedIn } from "@clerk/nextjs";
+import useAxios from "@/hooks/useAxios";
+import { useEffect, useState } from "react";
+import Loader from "@/components/Loader";
 
-const Problem = async (props: PageProps<"/problems/[problemSlug]">) => {
-  const { problemSlug } = await props.params;
-  const { data } = await axiosInstance.get(`/services/problems/${problemSlug}`);
-  const problem = data.data;
-  if (!problem) {
-    return notFound();
+const Problem = () => {
+  const { problemSlug } = useParams();
+  const [problem, setProblem] = useState<Problem | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [{}, fetchProblem] = useAxios({}, { manual: true });
+
+  useEffect(() => {
+    if (!problemSlug) return;
+    (async () => {
+      const { data } = await fetchProblem({
+        url: `/services/problems/${problemSlug}`,
+      });
+      if (data.success) {
+        setProblem(data.data);
+      }
+      setLoading(false);
+    })();
+  }, [problemSlug, fetchProblem]);
+
+  if (loading) {
+    return <Loader />;
   }
+
+  if (!loading && !problem) return notFound();
+
   return (
     <>
       <Tabs defaultValue="Problem Statement" className="dark p-4 w-full">
@@ -38,7 +59,7 @@ const Problem = async (props: PageProps<"/problems/[problemSlug]">) => {
           forceMount
           className="data-[state=inactive]:hidden"
         >
-          <ProblemDetails problem={problem} />
+          {problem && <ProblemDetails problem={problem} />}
         </TabsContent>
         <SignedIn>
           <TabsContent

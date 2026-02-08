@@ -49,7 +49,7 @@ export function getDeploymentManifestJSON(
                   name: 'MINIO_ACCESS_KEY',
                   valueFrom: {
                     configMapKeyRef: {
-                      name: 'mlcode-config',
+                      name: 'minio-config',
                       key: 'MINIO_ACCESS_KEY',
                     },
                   },
@@ -58,7 +58,7 @@ export function getDeploymentManifestJSON(
                   name: 'MINIO_SECRET_KEY',
                   valueFrom: {
                     configMapKeyRef: {
-                      name: 'mlcode-config',
+                      name: 'minio-config',
                       key: 'MINIO_SECRET_KEY',
                     },
                   },

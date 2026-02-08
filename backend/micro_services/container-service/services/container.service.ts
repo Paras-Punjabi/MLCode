@@ -116,7 +116,17 @@ export default class ContainerService {
       let startTime = it.status?.startTime;
       let currentStatus = it.status?.phase;
       let nodeName = it.spec?.nodeName;
-      return { sessionId, restartCount, startTime, currentStatus, nodeName };
+      let userId = it.metadata?.labels?.userId;
+      let problem = it.metadata?.labels?.problemSlug;
+      return {
+        userId,
+        problem,
+        sessionId,
+        restartCount,
+        startTime,
+        currentStatus,
+        nodeName,
+      };
     });
     return pods;
   }
