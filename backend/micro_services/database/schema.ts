@@ -22,7 +22,6 @@ export const statusEnum = pgEnum('status', [
 
 export const problemsTable = pgTable('problems', {
   problemSlug: text('problem_slug').notNull().primaryKey(),
-  problemId: uuid('problem_id').defaultRandom().unique(),
   problemNumber: serial('problem_number').unique(),
   problemName: text('problem_name').notNull(),
   problemDesc: text('problem_desc').notNull(),
@@ -39,8 +38,8 @@ export const submissionsTable = pgTable('submissions', {
   userId: varchar('user_id')
     .references(() => usersTable.userId)
     .notNull(),
-  problemId: uuid('problem_id')
-    .references(() => problemsTable.problemId)
+  problemSlug: text('problem_slug')
+    .references(() => problemsTable.problemSlug)
     .notNull(),
   status: statusEnum('status').notNull(),
   input: text('input').default('N/A').notNull(),
@@ -53,7 +52,7 @@ export const notebooksTable = pgTable('notebooks', {
   userId: varchar('user_id')
     .references(() => usersTable.userId)
     .notNull(),
-  problemId: uuid('problem_id')
-    .references(() => problemsTable.problemId)
+  problemSlug: text('problem_slug')
+    .references(() => problemsTable.problemSlug)
     .notNull(),
 });

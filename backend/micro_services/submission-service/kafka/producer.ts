@@ -12,7 +12,7 @@ const producer = new KafkaProducer(
 
 (async () => {
   const userId = process.argv[2];
-  const problemId = process.argv[3];
-  const message: MessageType = { userId, problemId };
+  const problemSlug = process.argv[3];
+  const message: MessageType = { userId, problemSlug };
   await producer.push(message);
 })();

@@ -19,7 +19,7 @@ async function consumeMessageCallback(payload: EachMessagePayload) {
   let payloadData = JSON.parse(payload.message.value?.toString() as string);
   let pipeline = new VerifySubmissionPipeline(
     payloadData['userId'],
-    payloadData['problemId']
+    payloadData['problemSlug']
   );
   await pipeline.runPipeline();
   await consumer.commit({

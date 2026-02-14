@@ -48,12 +48,12 @@ export async function getProblems(req: Request, res: Response) {
 
 export async function getProblemBySlug(req: Request, res: Response) {
   try {
-    let problemId: string = req.params.problem_slug;
-    let data = await problemService.getProblemBySlug(problemId);
+    let problemSlug: string = req.params.problem_slug;
+    let data = await problemService.getProblemBySlug(problemSlug);
     res.status(200).json({
       success: true,
       data: data.length > 0 ? data[0] : null,
-      message: `Problem Data with problem_id ${problemId}`,
+      message: `Problem Data with problem_slug ${problemSlug}`,
     });
   } catch (err) {
     if (err instanceof DrizzleQueryError) {

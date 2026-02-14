@@ -9,13 +9,13 @@ export default class VerifySubmissionPipeline {
   private answerBucketName: string;
   private notebooksBucketName: string;
   private userId: string;
-  private problemId: string;
+  private problemSlug: string;
 
-  constructor(userId: string, problemId: string) {
+  constructor(userId: string, problemSlug: string) {
     this.answerBucketName = config.ANSWERS_BUCKET_NAME;
     this.notebooksBucketName = config.NOTEBOOKS_BUCKET_NAME;
     this.userId = userId;
-    this.problemId = problemId;
+    this.problemSlug = problemSlug;
   }
 
   convertDataToMap(
@@ -140,7 +140,7 @@ export default class VerifySubmissionPipeline {
   }
 
   async getSchema() {
-    let schemaPath = `${this.problemId}/schema.json`;
+    let schemaPath = `${this.problemSlug}/schema.json`;
     return await objectStore.getParsedJSONObject(
       this.answerBucketName,
       schemaPath
@@ -148,7 +148,7 @@ export default class VerifySubmissionPipeline {
   }
 
   async getVariables() {
-    let schemaPath = `${this.problemId}/variables.json`;
+    let schemaPath = `${this.problemSlug}/variables.json`;
     return await objectStore.getParsedJSONObject(
       this.answerBucketName,
       schemaPath
@@ -156,7 +156,7 @@ export default class VerifySubmissionPipeline {
   }
 
   async getUserSubmissionData(schema: Record<string, string>) {
-    let submissionPath = `${this.userId}/${this.problemId}/submission.csv`;
+    let submissionPath = `${this.userId}/${this.problemSlug}/submission.csv`;
     return await objectStore.getParsedCSVObject(
       this.notebooksBucketName,
       submissionPath,
@@ -165,7 +165,7 @@ export default class VerifySubmissionPipeline {
   }
 
   async getAnswerData(schema: Record<string, string>) {
-    let answerCSVPath = `${this.problemId}/answer.csv`;
+    let answerCSVPath = `${this.problemSlug}/answer.csv`;
     return await objectStore.getParsedCSVObject(
       this.answerBucketName,
       answerCSVPath,
@@ -176,7 +176,7 @@ export default class VerifySubmissionPipeline {
   async runPipeline() {
     let { submissionId } = await submissionService.addPendingSubmission(
       this.userId,
-      this.problemId
+      this.problemSlug
     );
 
     // Get Schema from Object Store [ANSWERS]

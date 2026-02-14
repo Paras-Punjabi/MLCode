@@ -12,7 +12,7 @@ import config from '../../configs/dotenv.config';
 
 export type MessageType = {
   userId: string;
-  problemId: string;
+  problemSlug: string;
 };
 
 export class KafkaService {

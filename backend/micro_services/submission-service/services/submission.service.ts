@@ -17,10 +17,10 @@ const producer = new KafkaProducer(
 producer.connect();
 
 class SubmissionService {
-  async addPendingSubmission(userId: string, problemId: string) {
+  async addPendingSubmission(userId: string, problemSlug: string) {
     let [data] = await db
       .insert(submissionsTable)
-      .values({ userId, problemId, status: 'PENDING' })
+      .values({ userId, problemSlug, status: 'PENDING' })
       .returning();
     return data;
   }
@@ -50,16 +50,16 @@ class SubmissionService {
       .where(eq(submissionsTable.submissionId, submissionId));
   }
 
-  async getSubmissions(userId: string, problemId: string | undefined) {
+  async getSubmissions(userId: string, problemSlug: string | undefined) {
     let data = null;
-    if (problemId) {
+    if (problemSlug) {
       data = await db
         .select()
         .from(submissionsTable)
         .where(
           and(
             eq(submissionsTable.userId, userId),
-            eq(submissionsTable.problemId, problemId)
+            eq(submissionsTable.problemSlug, problemSlug)
           )
         );
     } else {
@@ -71,8 +71,8 @@ class SubmissionService {
     return data;
   }
 
-  async pushSubmissionToKafka(userId: string, problemId: string) {
-    let message = { userId, problemId } as MessageType;
+  async pushSubmissionToKafka(userId: string, problemSlug: string) {
+    let message = { userId, problemSlug } as MessageType;
     producer.push(message);
   }
 }
