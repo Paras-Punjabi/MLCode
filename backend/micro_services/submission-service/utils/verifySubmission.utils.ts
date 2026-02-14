@@ -1,8 +1,8 @@
-import MinioObjectReader from '../services/minio.service';
+import MinioService from '../services/minio.service';
 import config from '../../configs/dotenv.config';
 import SubmissionService from '../services/submission.service';
 
-const objectStore = new MinioObjectReader();
+const objectStore = new MinioService();
 const submissionService = new SubmissionService();
 
 export default class VerifySubmissionPipeline {

@@ -108,6 +108,8 @@ export default class ProblemService {
         problemTags,
       })
       .returning();
+    await this.redisCache.remove('total_problems_by_level');
+    await this.redisCache.remove('total_problems');
     return data;
   }
 

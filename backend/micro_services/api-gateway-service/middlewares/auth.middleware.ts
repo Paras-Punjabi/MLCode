@@ -11,26 +11,27 @@ export const authMiddleware = async (
 ) => {
   const { isAuthenticated, userId, sessionClaims } = getAuth(req);
 
-  const orgResponse = (
-    await clerkClient.organizations.getOrganizationMembershipList({
-      organizationId: config.CLERK_ORGANIZATION_ID,
-      userId: [userId as string],
-    })
-  ).data;
+  if (userId) {
+    const orgResponse = (
+      await clerkClient.organizations.getOrganizationMembershipList({
+        organizationId: config.CLERK_ORGANIZATION_ID,
+        userId: [userId],
+      })
+    ).data;
 
-  if (
-    orgResponse.length !== 0 &&
-    orgResponse[0].role === config.CLERK_ADMIN_ROLE
-  ) {
-    req.isAdmin = true;
-  } else {
-    req.isAdmin = false;
-  }
-
-  if (isAuthenticated && userId) {
-    req.userId = userId;
-    req.isMLCodeUser = sessionClaims.metadata.isMLCodeUser;
-    return next();
+    if (
+      orgResponse.length !== 0 &&
+      orgResponse[0].role === config.CLERK_ADMIN_ROLE
+    ) {
+      req.isAdmin = true;
+    } else {
+      req.isAdmin = false;
+    }
+    if (isAuthenticated) {
+      req.userId = userId;
+      req.isMLCodeUser = sessionClaims.metadata.isMLCodeUser;
+      return next();
+    }
   }
 
   throw new ApiError({
@@ -42,7 +43,7 @@ export const authMiddleware = async (
 
 export const isAdmin = async (
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ) => {
   if (req.isAdmin) {

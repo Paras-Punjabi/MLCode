@@ -1,4 +1,6 @@
-export interface ObjectReader {
+import Stream from 'stream';
+
+export interface ObjectStore {
   getParsedJSONObject(
     bucketName: string,
     path: string
@@ -14,7 +16,14 @@ export interface ObjectReader {
     schema: Record<string, string>
   ): Promise<{
     success: boolean;
-    data: (Record<string, unknown>)[];
+    data: Record<string, unknown>[];
     message: string | null;
   }>;
+
+  insertObject(
+    bucketName: string,
+    path: string,
+    stream: Stream.Readable,
+    size: number
+  ): Promise<void>;
 }

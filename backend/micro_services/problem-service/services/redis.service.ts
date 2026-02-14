@@ -14,6 +14,10 @@ export class RedisCache implements Cache {
   async set(key: string, ttl: number, value: string) {
     await this.client.setex(key, ttl, value);
   }
+
+  async remove(key: string) {
+    await this.client.del(key);
+  }
 }
 
 export class LFURedisCache implements LFUCache {

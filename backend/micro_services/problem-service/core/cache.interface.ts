@@ -6,5 +6,6 @@ export interface LFUCache {
 
 export interface Cache {
   get(key: string): Object;
-  set(key: string, ttl:number, value: string): Promise<void>;
+  set(key: string, ttl: number, value: string): Promise<void>;
+  remove(key: string): Promise<void>;
 }

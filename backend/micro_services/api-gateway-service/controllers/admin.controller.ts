@@ -2,15 +2,18 @@ import { Request, Response } from 'express';
 import ProblemService from '../../problem-service/services/problem.service';
 import UserService from '../services/user.service';
 import ContainerService from '../../container-service/services/container.service';
+import MinioService from '../../submission-service/services/minio.service';
 
 const problemService = new ProblemService();
 const userService = new UserService();
 const containserService = new ContainerService();
+const minioService = new MinioService();
 
 export async function createProblem(req: Request, res: Response) {
   try {
     const { problemSlug, problemName, problemDesc, problemTags, problemLevel } =
       req.body;
+
     const data = await problemService.insertProblem(
       problemSlug,
       problemName,
@@ -18,10 +21,24 @@ export async function createProblem(req: Request, res: Response) {
       problemTags,
       problemLevel
     );
+
+    (req.files as Express.Multer.File[])?.forEach(
+      async (item: Express.Multer.File) => {
+        item.stream;
+        await minioService.insertObject(
+          item.fieldname,
+          `${problemSlug}/${item.originalname}`,
+          item.stream,
+          item.size
+        );
+      }
+    );
+
     res.status(201).json({
       success: true,
       data,
-      message: 'Problem Inserted Successfully',
+      message:
+        'Problem inserted, Dataset and Answer Files Uploaded successfully',
     });
   } catch (err) {
     console.log(err);
