@@ -4,8 +4,7 @@ import { and, eq } from 'drizzle-orm';
 import { KafkaProducer, MessageType } from './kafka.service';
 import config from '../../configs/dotenv.config';
 
-type InsertedSubmissionType = typeof submissionsTable.$inferSelect;
-type StatusType = NonNullable<InsertedSubmissionType['status']> | undefined;
+type InsertedSubmissionType = typeof submissionsTable.$inferInsert;
 
 const producer = new KafkaProducer(
   {
@@ -25,29 +24,13 @@ class SubmissionService {
     return data;
   }
 
-  async updateSubmission({
-    submissionId,
-    status = undefined,
-    input = undefined,
-    output = undefined,
-    expected = undefined,
-  }: {
-    submissionId: string;
-    status: StatusType;
-    input: string | undefined;
-    output: string | undefined;
-    expected: string | undefined;
-  }) {
-    let updateObj: { [key: string]: string } = {};
-    if (status) updateObj['status'] = status;
-    if (input) updateObj['input'] = input;
-    if (output) updateObj['output'] = output;
-    if (expected) updateObj['expected'] = expected;
-
+  async updateSubmission(
+    data: Omit<InsertedSubmissionType, 'userId' | 'problemSlug'>
+  ) {
     await db
       .update(submissionsTable)
-      .set(updateObj)
-      .where(eq(submissionsTable.submissionId, submissionId));
+      .set(data)
+      .where(eq(submissionsTable.submissionId, data.submissionId!));
   }
 
   async getSubmissions(userId: string, problemSlug: string | undefined) {

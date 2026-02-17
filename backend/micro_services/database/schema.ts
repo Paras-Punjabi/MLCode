@@ -5,7 +5,9 @@ import {
   varchar,
   pgEnum,
   serial,
+  timestamp,
 } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
 
 export const problemLevelEnum = pgEnum('problemLevel', [
   'EASY',
@@ -42,9 +44,13 @@ export const submissionsTable = pgTable('submissions', {
     .references(() => problemsTable.problemSlug)
     .notNull(),
   status: statusEnum('status').notNull(),
-  input: text('input').default('N/A').notNull(),
-  output: text('output').default('N/A').notNull(),
-  expected: text('expected').default('N/A').notNull(),
+  input: text('input'),
+  output: text('output'),
+  expected: text('expected'),
+  verdict: text('verdict'),
+  createdAt: timestamp('created_at', { mode: 'date' })
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
 });
 
 export const notebooksTable = pgTable('notebooks', {

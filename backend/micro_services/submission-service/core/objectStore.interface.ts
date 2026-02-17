@@ -1,6 +1,7 @@
 import Stream from 'stream';
 
 export interface ObjectStore {
+  objectExists(bucketName: string, path: string): Promise<boolean>;
   getParsedJSONObject(
     bucketName: string,
     path: string
@@ -16,7 +17,7 @@ export interface ObjectStore {
     schema: Record<string, string>
   ): Promise<{
     success: boolean;
-    data: Record<string, unknown>[];
+    data: Record<string, unknown>[] | null;
     message: string | null;
   }>;
 

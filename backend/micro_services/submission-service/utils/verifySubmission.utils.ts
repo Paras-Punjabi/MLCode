@@ -69,13 +69,14 @@ export default class VerifySubmissionPipeline {
           status: 'ATTEMPTED',
           input: JSON.stringify(inputJson),
           output: JSON.stringify(
-            Object.entries(variablesData['Y'].map((item) => [item, null]))
+            Object.fromEntries(variablesData['Y'].map((item) => [item, null]))
           ),
           expected: JSON.stringify(
-            Object.entries(
+            Object.fromEntries(
               variablesData['Y'].map((item, idx) => [item, answer[idx]])
             )
           ),
+          verdict: `Failed at Test Case - ${testCase}`,
         });
 
         return { success: false, message: `Test Case - ${testCase} Failed` };
@@ -109,13 +110,16 @@ export default class VerifySubmissionPipeline {
           status: 'ATTEMPTED',
           input: JSON.stringify(inputJson),
           output: JSON.stringify(
-            Object.entries(variablesData['Y'].map((item) => [item, null]))
+            Object.fromEntries(
+              variablesData['Y'].map((item, idx) => [item, userSubmission[idx]])
+            )
           ),
           expected: JSON.stringify(
-            Object.entries(
+            Object.fromEntries(
               variablesData['Y'].map((item, idx) => [item, answer[idx]])
             )
           ),
+          verdict: `Failed at Test Case - ${testCase}`,
         });
 
         return {
@@ -128,9 +132,10 @@ export default class VerifySubmissionPipeline {
     await submissionService.updateSubmission({
       submissionId,
       status: 'ACCEPTED',
-      input: undefined,
-      output: 'All testcases passed',
-      expected: undefined,
+      input: '-',
+      output: '-',
+      expected: '-',
+      verdict: `All Test Cases Passed`,
     });
 
     return {
@@ -190,9 +195,7 @@ export default class VerifySubmissionPipeline {
       await submissionService.updateSubmission({
         submissionId: submissionId,
         status: 'FAILED',
-        input: undefined,
-        output: schemaErrorMessage as string,
-        expected: undefined,
+        verdict: 'Schema Parsing Error',
       });
       return { success: false, message: schemaErrorMessage };
     }
@@ -208,9 +211,7 @@ export default class VerifySubmissionPipeline {
       await submissionService.updateSubmission({
         submissionId: submissionId,
         status: 'FAILED',
-        input: undefined,
-        output: variablesErrorMessage as string,
-        expected: undefined,
+        verdict: 'Variables Parsing Error',
       });
       return { success: false, message: variablesErrorMessage };
     }
@@ -222,30 +223,29 @@ export default class VerifySubmissionPipeline {
       message: answerErrorMessage,
     } = await this.getAnswerData(schemaData);
 
-    if (!answerSuccess) {
+    if (!answerSuccess || !answerData) {
       await submissionService.updateSubmission({
         submissionId: submissionId,
         status: 'FAILED',
-        input: undefined,
-        output: answerErrorMessage as string,
-        expected: undefined,
+        verdict: 'Answer Parsing Error',
       });
       return { success: false, message: answerErrorMessage };
     }
 
     // Get userSubmissionData from Object Store [NOTEBOOKS]
-    let { success: userSubmissionSuccess, data: userSubmissionData } =
-      await this.getUserSubmissionData(schemaData);
+    let {
+      success: userSubmissionSuccess,
+      data: userSubmissionData,
+      message: userErrorMessage,
+    } = await this.getUserSubmissionData(schemaData);
 
-    if (!userSubmissionSuccess) {
+    if (!userSubmissionSuccess || !userSubmissionData) {
       await submissionService.updateSubmission({
         submissionId: submissionId,
         status: 'FAILED',
-        input: undefined,
-        output: 'Failed to parse user submission',
-        expected: undefined,
+        verdict: userErrorMessage,
       });
-      return { success: false, message: 'Failed to parse user submission' };
+      return { success: false, message: userErrorMessage };
     }
 
     // Compare values between answer and userSubmission

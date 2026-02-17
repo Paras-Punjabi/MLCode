@@ -74,7 +74,8 @@ export default class ProblemService {
       .select()
       .from(problemsTable)
       .offset((page - 1) * limit)
-      .limit(limit);
+      .limit(limit)
+      .orderBy(problemsTable.problemNumber);
 
     return { data, totalProblems, totalPages };
   }

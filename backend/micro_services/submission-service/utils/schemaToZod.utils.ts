@@ -6,8 +6,6 @@ export function getZodDataType(dataType: string) {
       return z.string();
     case 'number':
       return z.coerce.number();
-    case 'boolean':
-      return z.coerce.boolean();
     default:
       return z.string();
   }

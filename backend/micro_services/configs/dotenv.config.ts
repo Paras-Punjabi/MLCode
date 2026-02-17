@@ -3,8 +3,6 @@ import { config } from 'dotenv';
 config();
 
 export default {
-  PORT: process.env.PORT!,
-
   POSTGRES_HOST: process.env.POSTGRES_HOST!,
   POSTGRES_URI: `postgresql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:5432/${process.env.POSTGRES_DB}`,
   POSTGRES_USER: process.env.POSTGRES_USER!,

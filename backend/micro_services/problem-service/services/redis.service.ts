@@ -29,7 +29,6 @@ export class LFURedisCache implements LFUCache {
 
   constructor() {
     this.client = new Redis(config.REDIS_URI);
-    console.log('Redis Connected');
     this.sortedSetName = config.REDIS_SORTED_SET_NAME;
     this.hashSetName = config.REDIS_HASHSET_NAME;
     this.initalFrequency = 1;
