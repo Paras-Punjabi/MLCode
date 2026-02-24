@@ -5,8 +5,9 @@ import {
   useAuth as useClerkAuth,
   useUser as useClerkUser,
   useClerk,
+  useUser,
 } from "@clerk/nextjs"
-import { SignOut } from "@clerk/types"
+import { SignOut, UserResource } from "@clerk/types"
 import { AxiosError } from "axios"
 import { createContext, useContext, useEffect } from "react"
 import { toast } from "sonner"
@@ -14,6 +15,7 @@ import { toast } from "sonner"
 const AuthContext = createContext<{
   signOut: SignOut;
   isSignedIn: boolean;
+  user?: UserResource | null
 }>({
   signOut: () => Promise.reject(
     new Error('AuthContext: signout called outside of AuthProvider')
@@ -24,7 +26,7 @@ const AuthContext = createContext<{
 const AuthProvider = (props: React.PropsWithChildren) => {
   const { sessionClaims, getToken } = useClerkAuth()
   const { signOut } = useClerk()
-  const { isSignedIn } = useClerkUser()
+  const { isSignedIn, user } = useClerkUser()
   const [_, syncUser] = useAxios({
     url: '/auth/sync-user',
     method: 'PUT'
@@ -53,6 +55,7 @@ const AuthProvider = (props: React.PropsWithChildren) => {
     <AuthContext.Provider value={{
       signOut,
       isSignedIn: !!isSignedIn && !!isMLCodeUser,
+      user
     }}>
       {props.children}
     </AuthContext.Provider>

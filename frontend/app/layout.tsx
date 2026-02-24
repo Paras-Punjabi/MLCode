@@ -1,17 +1,31 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Fjalla_One, IBM_Plex_Mono, IBM_Plex_Sans, IBM_Plex_Serif } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const ibmPlexMono = IBM_Plex_Mono({
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-ibm-plex-mono",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const ibmPlexSans = IBM_Plex_Sans({
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-ibm-plex-sans",
 });
+
+const ibmPlexSerif = IBM_Plex_Serif({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-ibm-plex-serif",
+})
+
+const fjallaOne = Fjalla_One({
+  subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-fjalla-one",
+})
 
 export const metadata: Metadata = {
   title: "MLCode",
@@ -27,9 +41,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased body-font home-bg text-white`}
-      >
+      <body className={`${ibmPlexMono.variable} ${ibmPlexSans.variable} ${ibmPlexSerif.variable} ${fjallaOne.variable} antialiased`}>
         <Providers>
           {children}
         </Providers>

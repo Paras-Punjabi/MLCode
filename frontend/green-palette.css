@@ -1,0 +1,58 @@
+@theme {
+  /* ── Raw Palette ─────────────────────────────
+     Define all raw color values here first.
+     Light and dark variants side by side.
+  ──────────────────────────────────────────── */
+
+  /* Background */
+  --color-palette-background:      hsl(162 57% 96%);   /* #edfaf7 — teal tinted */
+  --color-palette-background-dark: hsl(168 47% 7%);    /* #0a1a18 — deep teal black */
+
+  /* Foreground / Text */
+  --color-palette-foreground:      hsl(170 45% 11%);   /* #0f2724 — deep teal text */
+  --color-palette-foreground-dark: hsl(166 80% 91%);   /* #ccfaf5 — soft teal white */
+
+  /* Surface (cards, modals) */
+  --color-palette-surface:         hsl(0 0% 100%);     /* #ffffff */
+  --color-palette-surface-dark:    hsl(168 40% 11%);   /* #112420 */
+
+  /* Primary */
+  --color-palette-primary:         hsl(176 83% 32%);   /* #0d9488 — deep teal */
+  --color-palette-primary-dark:    hsl(174 69% 51%);   /* #2dd4bf — bright teal */
+
+  /* Secondary text */
+  --color-palette-secondary:       hsl(170 28% 32%);   /* #3d6b66 */
+  --color-palette-secondary-dark:  hsl(174 30% 40%);   /* #4a8a82 */
+
+  /* Accent */
+  --color-palette-accent:          hsl(192 91% 36%);   /* #0891b2 — blue teal */
+  --color-palette-accent-dark:     hsl(188 86% 53%);   /* #22d3ee — bright cyan */
+
+  /* Border */
+  --color-palette-border:          hsl(168 45% 80%);   /* #b2e8e0 */
+  --color-palette-border-dark:     hsl(170 38% 17%);   /* #1a3d38 */
+
+  /* Input */
+  --color-palette-input:           hsl(164 45% 88%);   /* #d0f0ea */
+  --color-palette-input-dark:      hsl(170 38% 17%);   /* #1a3d38 */
+
+  /* Ring */
+  --color-palette-ring:            hsl(176 83% 32%);   /* #0d9488 */
+  --color-palette-ring-dark:       hsl(174 69% 51%);   /* #2dd4bf */
+
+  /* Muted */
+  --color-palette-muted:           hsl(164 45% 88%);   /* #d0f0ea */
+  --color-palette-muted-dark:      hsl(168 28% 18%);   /* slightly lighter than surface */
+
+  /* Primary subtle (for badges, tags) */
+  --color-palette-primary-subtle:      hsl(166 87% 91%);  /* #ccfbf1 */
+  --color-palette-primary-subtle-dark: hsl(170 60% 12%);  /* #0d3330 */
+
+  /* Status */
+  --color-palette-success:     hsl(142 72% 29%);
+  --color-palette-warning:     hsl(38 92% 50%);
+  --color-palette-error:       hsl(0 74% 42%);
+  --color-palette-info:        hsl(192 91% 36%);
+  --color-palette-destructive: hsl(0 84% 60%);
+  --color-palette-destructive-dark: hsl(0 63% 31%);
+}
