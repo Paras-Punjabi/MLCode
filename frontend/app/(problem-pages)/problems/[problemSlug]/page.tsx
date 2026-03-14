@@ -1,31 +1,85 @@
 "use client";
 import ProblemDetails from "@/components/ProblemDetails";
 import { Tabs, TabsContent, TabsTrigger, TabsList } from "@/components/ui/tabs";
-import { type Problem } from "@/lib/types";
-import { notFound, useParams } from "next/navigation";
+import { Submission, type Problem } from "@/lib/types";
+import {
+  notFound,
+  useParams,
+  useSearchParams,
+  useRouter,
+} from "next/navigation";
 import { SignedIn } from "@clerk/nextjs";
 import useAxios from "@/hooks/useAxios";
 import { useEffect, useState } from "react";
 import Loader from "@/components/Loader";
+import { useContext } from "react";
+import SubmissionDetails from "@/components/SubmissionDetails";
+import { AuthContext } from "@/contexts/auth.context";
 
 const Problem = () => {
   const { problemSlug } = useParams();
+  const searchParams = useSearchParams();
+  const { user } = useContext(AuthContext);
   const [problem, setProblem] = useState<Problem | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [problemStatus, setProblemStatus] = useState<string>("");
+  const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [currentTab, setCurrentTab] = useState<string>(() => {
+    if (searchParams.has("tab")) {
+      if (searchParams.get("tab") === "submissions") return "Submissions";
+    }
+    return "Problem Statement";
+  });
+  const router = useRouter();
   const [{}, fetchProblem] = useAxios({}, { manual: true });
+  const [{}, fetchSubmissions] = useAxios(
+    {
+      url: "/services/submissions/allSubmissions",
+      method: "POST",
+      data: {
+        userId: user?.id,
+        problemSlug: problemSlug,
+      },
+    },
+    { manual: true },
+  );
+
+  useEffect(() => {}, []);
+
+  const handleTabChange = (newTab: string) => {
+    setCurrentTab(newTab);
+    const tabParam = newTab === "Submissions" ? "submissions" : "question";
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", tabParam);
+    router.push(`?${params.toString()}`);
+  };
 
   useEffect(() => {
     if (!problemSlug) return;
+    if (!user) return;
     (async () => {
-      const { data } = await fetchProblem({
+      const { data: problemData } = await fetchProblem({
         url: `/services/problems/${problemSlug}`,
       });
-      if (data.success) {
-        setProblem(data.data);
+      if (problemData.success) {
+        setProblem(problemData.data);
+      }
+      const { data: submissionData } = await fetchSubmissions();
+      if (submissionData.success) {
+        setSubmissions(submissionData.data);
+        if (submissionData.data.length !== 0) {
+          setProblemStatus("Attempted");
+          for (const item of submissionData.data) {
+            if (item.status === "ACCEPTED") {
+              setProblemStatus("Solved");
+              break;
+            }
+          }
+        }
       }
       setLoading(false);
     })();
-  }, [problemSlug, fetchProblem]);
+  }, [problemSlug, fetchProblem, fetchSubmissions, user]);
 
   if (loading) {
     return <Loader />;
@@ -35,7 +89,11 @@ const Problem = () => {
 
   return (
     <>
-      <Tabs defaultValue="Problem Statement" className="dark p-4 w-full">
+      <Tabs
+        value={currentTab}
+        onValueChange={handleTabChange}
+        className="dark p-4 w-full"
+      >
         <div className="flex justify-center mb-6">
           <TabsList className="w-[85%]">
             <TabsTrigger
@@ -59,7 +117,9 @@ const Problem = () => {
           forceMount
           className="data-[state=inactive]:hidden"
         >
-          {problem && <ProblemDetails problem={problem} />}
+          {problem && (
+            <ProblemDetails problemStatus={problemStatus} problem={problem} />
+          )}
         </TabsContent>
         <SignedIn>
           <TabsContent
@@ -67,7 +127,7 @@ const Problem = () => {
             forceMount
             className="data-[state=inactive]:hidden"
           >
-            <span>Submissions Tab</span>
+            <SubmissionDetails submissions={submissions} />
           </TabsContent>
         </SignedIn>
       </Tabs>

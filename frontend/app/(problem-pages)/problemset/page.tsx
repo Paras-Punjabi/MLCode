@@ -27,7 +27,7 @@ const getDifficultyColor = (problemLevel: string) => {
 const ProblemLink = ({ problem, idx }: { problem: Problem; idx: number }) => {
   return (
     <Link
-      href={`/problems/${problem.problemSlug}`}
+      href={`/problems/${problem.problemSlug}?tab=question`}
       key={idx}
       className={`flex items-center ${idx % 2 == 0 && "bg-gray-800/50"}  px-4 my-2 py-4 rounded-xl cursor-pointer`}
     >

@@ -1,6 +1,6 @@
 import db from '../../database/connector';
 import { submissionsTable } from '../../database/schema';
-import { and, eq } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 import { KafkaProducer, MessageType } from './kafka.service';
 import config from '../../configs/dotenv.config';
 
@@ -19,7 +19,12 @@ class SubmissionService {
   async addPendingSubmission(userId: string, problemSlug: string) {
     let [data] = await db
       .insert(submissionsTable)
-      .values({ userId, problemSlug, status: 'PENDING' })
+      .values({
+        userId,
+        problemSlug,
+        status: 'PENDING',
+        verdict: 'Submission Queued',
+      })
       .returning();
     return data;
   }
@@ -44,12 +49,14 @@ class SubmissionService {
             eq(submissionsTable.userId, userId),
             eq(submissionsTable.problemSlug, problemSlug)
           )
-        );
+        )
+        .orderBy(desc(submissionsTable.createdAt));
     } else {
       data = await db
         .select()
         .from(submissionsTable)
-        .where(eq(submissionsTable.userId, userId));
+        .where(eq(submissionsTable.userId, userId))
+        .orderBy(desc(submissionsTable.createdAt));
     }
     return data;
   }

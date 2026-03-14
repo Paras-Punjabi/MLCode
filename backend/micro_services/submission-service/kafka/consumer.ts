@@ -32,6 +32,6 @@ export default class SubmissionServiceKafkaConsumer {
       [config.KAFKA_TOPIC]
     );
     console.log('✅ Kafka Consumer Started');
-    await this.consumer.listen(this.consumeMessageCallback);
+    await this.consumer.listen(this.consumeMessageCallback.bind(this));
   }
 }

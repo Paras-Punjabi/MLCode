@@ -7,7 +7,7 @@ import {
 const router = Router();
 
 router.post('/allSubmissions', getSubmissions);
-router.post('/submit', pushSubmissionToKafka);
+router.post('/submitSubmission', pushSubmissionToKafka);
 router.get('/health', (req: Request, res: Response) => {
   try {
     res

@@ -8,7 +8,9 @@ import ReactMarkdown from "react-markdown";
 import useAxios from "@/hooks/useAxios";
 import axiosInstance from "@/configs/axios.config";
 import { useEffect, useState } from "react";
+import { CheckCircle2, Clock } from "lucide-react";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const getDifficultyColor = (problemLevel: string) => {
   switch (problemLevel) {
@@ -23,11 +25,27 @@ const getDifficultyColor = (problemLevel: string) => {
   }
 };
 
-const ProblemDetails = ({ problem }: { problem: Problem }) => {
+const getProblemStatusColor = (problemStatus: string) => {
+  switch (problemStatus) {
+    case "Solved":
+      return "text-emerald-500";
+    default:
+      return "text-[#F59E0B]";
+  }
+};
+
+const ProblemDetails = ({
+  problem,
+  problemStatus,
+}: {
+  problem: Problem;
+  problemStatus: string;
+}) => {
   const { user, isSignedIn, isLoaded } = useUser();
   const [isSessionActive, setIsSessionActive] = useState<
     "loading" | "active" | "not-active"
   >("loading");
+  const router = useRouter();
   const [{}, fetchCurrentSessions] = useAxios(
     {
       url: `/services/containers/currentSession`,
@@ -67,6 +85,20 @@ const ProblemDetails = ({ problem }: { problem: Problem }) => {
     }
   };
 
+  const submitSubmission = async () => {
+    const { data: submissionData } = await axiosInstance.post(
+      "/services/submissions/submitSubmission",
+      {
+        userId: user?.id,
+        problemSlug: problem.problemSlug,
+      },
+    );
+    toast.error(submissionData.message);
+    const url = new URL(window.location.href);
+    url.searchParams.set("tab", "submissions");
+    router.push(url.href);
+  };
+
   const deleteSession = async () => {
     const { data: sessionData } = await axiosInstance.post(
       "/services/containers/deleteSession",
@@ -94,14 +126,22 @@ const ProblemDetails = ({ problem }: { problem: Problem }) => {
             <h2 className="text-3xl font-bold text-white tracking-wider">
               {problem.problemName}
             </h2>
-          </div>
-          <div className="flex items-center gap-3 flex-wrap">
             <span
               className={`items-center rounded-full border px-3 py-1 text-base font-semibold transition-colors ${getDifficultyColor(problem.problemLevel)}`}
             >
               {problem.problemLevel}
             </span>
           </div>
+          {problemStatus.length !== 0 && (
+            <div
+              className={`flex items-center gap-2 flex-wrap ${getProblemStatusColor(problemStatus)}`}
+            >
+              <span>
+                {problemStatus === "Solved" ? <CheckCircle2 /> : <Clock />}
+              </span>
+              <span>{problemStatus}</span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -126,7 +166,10 @@ const ProblemDetails = ({ problem }: { problem: Problem }) => {
         </div>
         <div className="flex gap-2">
           <SignedIn>
-            <Button className="cursor-pointer flex items-center gap-2">
+            <Button
+              onClick={submitSubmission}
+              className="cursor-pointer flex items-center gap-2"
+            >
               <span>Submit</span>
               <AiOutlineCloudUpload />
             </Button>
