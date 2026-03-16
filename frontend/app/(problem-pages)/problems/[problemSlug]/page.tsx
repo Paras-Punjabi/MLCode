@@ -15,6 +15,7 @@ import Loader from "@/components/Loader";
 import { useContext } from "react";
 import SubmissionDetails from "@/components/SubmissionDetails";
 import { AuthContext } from "@/contexts/auth.context";
+import axiosInstance from "@/configs/axios.config";
 
 const Problem = () => {
   const { problemSlug } = useParams();
@@ -22,7 +23,6 @@ const Problem = () => {
   const { user } = useContext(AuthContext);
   const [problem, setProblem] = useState<Problem | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [problemStatus, setProblemStatus] = useState<string>("");
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [currentTab, setCurrentTab] = useState<string>(() => {
     if (searchParams.has("tab")) {
@@ -54,6 +54,22 @@ const Problem = () => {
     router.push(`?${params.toString()}`);
   };
 
+  const submitSubmission = async () => {
+    if (!problem) return;
+    const { data: submissionData } = await axiosInstance.post(
+      "/services/submissions/submitSubmission",
+      {
+        userId: user?.id,
+        problemSlug: problem.problemSlug,
+      },
+    );
+    console.log(submissionData);
+    const url = new URL(window.location.href);
+    url.searchParams.set("tab", "submissions");
+    router.push(url.href);
+    setCurrentTab("Submissions");
+  };
+
   useEffect(() => {
     if (!problemSlug) return;
     if (!user) return;
@@ -64,22 +80,20 @@ const Problem = () => {
       if (problemData.success) {
         setProblem(problemData.data);
       }
+      setLoading(false);
+    })();
+  }, [problemSlug, fetchProblem, user]);
+
+  useEffect(() => {
+    if (!problemSlug) return;
+    if (!user) return;
+    (async () => {
       const { data: submissionData } = await fetchSubmissions();
       if (submissionData.success) {
         setSubmissions(submissionData.data);
-        if (submissionData.data.length !== 0) {
-          setProblemStatus("Attempted");
-          for (const item of submissionData.data) {
-            if (item.status === "ACCEPTED") {
-              setProblemStatus("Solved");
-              break;
-            }
-          }
-        }
       }
-      setLoading(false);
     })();
-  }, [problemSlug, fetchProblem, fetchSubmissions, user]);
+  }, [problemSlug, fetchSubmissions, user, currentTab]);
 
   if (loading) {
     return <Loader />;
@@ -118,7 +132,17 @@ const Problem = () => {
           className="data-[state=inactive]:hidden"
         >
           {problem && (
-            <ProblemDetails problemStatus={problemStatus} problem={problem} />
+            <ProblemDetails
+              submitSubmission={submitSubmission}
+              problemStatus={
+                submissions.length > 0
+                  ? submissions.some((item) => item.status === "ACCEPTED")
+                    ? "Solved"
+                    : "Attempted"
+                  : ""
+              }
+              problem={problem}
+            />
           )}
         </TabsContent>
         <SignedIn>

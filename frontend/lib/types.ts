@@ -13,6 +13,12 @@ export interface ProblemSession {
   sessionId: string | undefined;
 }
 
+export interface Notebook {
+  sessionId: string;
+  userId: string;
+  problemSlug: string;
+}
+
 export interface Submission {
   userId: string;
   submissionId: string;

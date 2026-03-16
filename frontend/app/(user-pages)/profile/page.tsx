@@ -1,13 +1,29 @@
 "use client";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useUser, RedirectToSignIn } from "@clerk/nextjs";
 import Loader from "@/components/Loader";
 import { FaUser } from "react-icons/fa";
 import { SlNotebook } from "react-icons/sl";
 import { Card, CardContent } from "@/components/ui/card";
 import UserProfile from "@/components/UserProfile";
+import NotebooksList from "@/components/NotebooksList";
+
+type Tab = "profile" | "notebooks";
+
+const VALID_TABS: Tab[] = ["profile", "notebooks"];
 
 const AccountSettings = () => {
   const { user, isLoaded, isSignedIn } = useUser();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const rawTab = searchParams.get("tab");
+  const activeTab: Tab =
+    rawTab && VALID_TABS.includes(rawTab as Tab) ? (rawTab as Tab) : "profile";
+
+  const setActiveTab = (tab: Tab) => {
+    router.push(`?tab=${tab}`, { scroll: false });
+  };
 
   if (!isSignedIn && isLoaded) {
     return <RedirectToSignIn />;
@@ -17,13 +33,10 @@ const AccountSettings = () => {
     return <Loader />;
   }
 
-  if (!isLoaded) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-purple-500 border-solid"></div>
-      </div>
-    );
-  }
+  const navItems: { id: Tab; label: string; icon: React.ReactNode }[] = [
+    { id: "profile", label: "Profile", icon: <FaUser /> },
+    { id: "notebooks", label: "Notebooks", icon: <SlNotebook /> },
+  ];
 
   return (
     <>
@@ -36,26 +49,41 @@ const AccountSettings = () => {
           </div>
 
           <div className="flex gap-8">
+            {/* Sidebar nav */}
             <div className="w-64 shrink-0">
               <Card className="bg-slate-800/50 border-slate-700">
-                <CardContent className="space-y-2">
-                  <button className="cursor-pointer w-full text-left px-3 py-2 rounded-md text-slate-300 hover:bg-slate-700/50 flex items-center gap-3">
-                    <span className="text-lg">
-                      <FaUser />
-                    </span>
-                    <span>Profile</span>
-                  </button>
-                  <button className="cursor-pointer w-full text-left px-3 py-2 rounded-md text-slate-300 hover:bg-slate-700/50 flex items-center gap-3">
-                    <span className="text-lg">
-                      <SlNotebook />
-                    </span>
-                    <span>Notebooks</span>
-                  </button>
+                <CardContent className="space-y-1 pt-4">
+                  {navItems.map(({ id, label, icon }) => (
+                    <button
+                      key={id}
+                      onClick={() => setActiveTab(id)}
+                      className={`cursor-pointer w-full text-left px-3 py-2 rounded-md flex items-center gap-3 transition-colors ${
+                        activeTab === id
+                          ? "bg-slate-700 text-white font-medium"
+                          : "text-slate-300 hover:bg-slate-700/50"
+                      }`}
+                    >
+                      <span className="text-lg">{icon}</span>
+                      <span>{label}</span>
+                    </button>
+                  ))}
                 </CardContent>
               </Card>
             </div>
 
-            {user && isLoaded && <UserProfile user={user} />}
+            {/* Content panel */}
+            <div className="flex-1 min-w-0">
+              {activeTab === "profile" && user && <UserProfile user={user} />}
+
+              {/* TODO: Render Notebooks component here */}
+              {activeTab === "notebooks" && user && (
+                <NotebooksList
+                  isSignedIn={isSignedIn}
+                  isLoaded={isLoaded}
+                  userId={user.id}
+                />
+              )}
+            </div>
           </div>
         </div>
       </div>
