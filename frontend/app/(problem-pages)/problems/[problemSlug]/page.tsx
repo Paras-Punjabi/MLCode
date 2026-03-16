@@ -44,8 +44,6 @@ const Problem = () => {
     { manual: true },
   );
 
-  useEffect(() => {}, []);
-
   const handleTabChange = (newTab: string) => {
     setCurrentTab(newTab);
     const tabParam = newTab === "Submissions" ? "submissions" : "question";
@@ -72,7 +70,6 @@ const Problem = () => {
 
   useEffect(() => {
     if (!problemSlug) return;
-    if (!user) return;
     (async () => {
       const { data: problemData } = await fetchProblem({
         url: `/services/problems/${problemSlug}`,
@@ -81,8 +78,9 @@ const Problem = () => {
         setProblem(problemData.data);
       }
       setLoading(false);
+      console.log(problemData);
     })();
-  }, [problemSlug, fetchProblem, user]);
+  }, [problemSlug, fetchProblem]);
 
   useEffect(() => {
     if (!problemSlug) return;
