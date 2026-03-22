@@ -19,8 +19,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { CheckCircle2, XCircle, Clock, Cpu } from "lucide-react";
 
-// ── helpers ──────────────────────────────────────────────────────────────────
-
 const statusConfig: Record<
   string,
   {

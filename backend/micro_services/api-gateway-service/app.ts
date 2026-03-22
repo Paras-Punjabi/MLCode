@@ -14,9 +14,27 @@ server.on(
 
       if (authResponse.success && reqURLArray.length >= 2) {
         const sessionId = reqURLArray[2];
-        notebookProxyServer.web(req, res, {
-          target: 'http://localhost:8888', // `http://notebook-service-${sessionId}:8888`
-        });
+        notebookProxyServer.web(
+          req,
+          res,
+          {
+            target: 'http://localhost:8888', // `http://notebook-service-${sessionId}:8888`
+          },
+          (_err) => {
+            res.writeHead(503, {
+              'Content-Type': 'text/plain',
+            });
+            res.write(
+              JSON.stringify({
+                success: false,
+                statusCode: 503,
+                session: null,
+                message: 'Session Not Reachable',
+              })
+            );
+            res.end();
+          }
+        );
       } else {
         res.writeHead(authResponse.statusCode, {
           'Content-Type': 'text/plain',
@@ -37,9 +55,17 @@ server.on('upgrade', async (req, socket, head) => {
 
     if (success && reqURLArray.length >= 2) {
       const sessionId = reqURLArray[2];
-      notebookProxyServer.ws(req, socket, head, {
-        target: 'http://localhost:8888', // `http://notebook-service-${sessionId}:8888`
-      });
+      notebookProxyServer.ws(
+        req,
+        socket,
+        head,
+        {
+          target: 'http://localhost:8888', // `http://notebook-service-${sessionId}:8888`
+        },
+        (_err) => {
+          socket.destroy();
+        }
+      );
     } else {
       socket.destroy();
     }
