@@ -10,156 +10,170 @@
   --radius-xl: calc(var(--radius) + 4px);
 
   /* Background */
-  --color-palette-background:      hsl(185 35% 96%);   /* soft blue-teal tinted white */
-  --color-palette-background-dark: hsl(193 28% 7%);    /* deep blue-teal black */
+  --color-palette-background: hsl(185 35% 96%);
+  /* soft blue-teal tinted white */
+  --color-palette-background-dark: hsl(193 28% 7%);
+  /* deep blue-teal black */
 
   /* Foreground / Text */
-  --color-palette-foreground:      hsl(190 40% 12%);   /* dark blue-teal text */
-  --color-palette-foreground-dark: hsl(185 55% 92%);   /* soft blue-teal white */
+  --color-palette-foreground: hsl(190 40% 12%);
+  /* dark blue-teal text */
+  --color-palette-foreground-dark: hsl(185 55% 92%);
+  /* soft blue-teal white */
 
   /* Surface (cards, modals) */
-  --color-palette-surface:         hsl(0 0% 100%);     /* #ffffff */
-  --color-palette-surface-dark:    hsl(193 25% 11%);   /* dark blue-teal surface */
+  --color-palette-surface: hsl(0 0% 100%);
+  /* #ffffff */
+  --color-palette-surface-dark: hsl(193 25% 11%);
+  /* dark blue-teal surface */
 
   /* Primary */
-  --color-palette-primary:         hsl(185 55% 38%);   /* blue-teal */
-  --color-palette-primary-dark:    hsl(185 52% 50%);   /* bright blue-teal */
+  --color-palette-primary: hsl(185 55% 38%);
+  /* blue-teal */
+  --color-palette-primary-dark: hsl(185 52% 50%);
+  /* bright blue-teal */
 
   /* Secondary text */
-  --color-palette-secondary:       hsl(190 22% 38%);   /* muted blue-teal */
-  --color-palette-secondary-dark:  hsl(190 18% 44%);   /* muted blue-teal dark */
+  --color-palette-secondary: hsl(190 22% 38%);
+  /* muted blue-teal */
+  --color-palette-secondary-dark: hsl(190 18% 44%);
+  /* muted blue-teal dark */
 
   /* Accent */
-  --color-palette-accent:          hsl(195 55% 45%);   /* slightly more blue accent */
-  --color-palette-accent-dark:     hsl(195 60% 65%);   /* bright accent for dark mode */
+  --color-palette-accent: hsl(195 55% 45%);
+  /* slightly more blue accent */
+  --color-palette-accent-dark: hsl(195 60% 65%);
+  /* bright accent for dark mode */
 
   /* Border */
-  --color-palette-border:          hsl(185 30% 84%);   /* soft blue-teal border */
-  --color-palette-border-dark:     hsl(193 22% 18%);   /* subtle dark border */
+  --color-palette-border: hsl(185 30% 84%);
+  /* soft blue-teal border */
+  --color-palette-border-dark: hsl(193 22% 18%);
+  /* subtle dark border */
 
   /* Input */
-  --color-palette-input:           hsl(185 30% 84%);
-  --color-palette-input-dark:      hsl(193 22% 18%);
+  --color-palette-input: hsl(185 30% 84%);
+  --color-palette-input-dark: hsl(193 22% 18%);
 
   /* Ring */
-  --color-palette-ring:            hsl(185 55% 38%);
-  --color-palette-ring-dark:       hsl(185 52% 50%);
+  --color-palette-ring: hsl(185 55% 38%);
+  --color-palette-ring-dark: hsl(185 52% 50%);
 
   /* Muted */
-  --color-palette-muted:           hsl(185 25% 88%);
-  --color-palette-muted-dark:      hsl(193 22% 16%);
+  --color-palette-muted: hsl(185 25% 88%);
+  --color-palette-muted-dark: hsl(193 22% 16%);
 
   /* Primary subtle (badges, tags, code bg) */
-  --color-palette-primary-subtle:      hsl(185 50% 90%);
+  --color-palette-primary-subtle: hsl(185 50% 90%);
   --color-palette-primary-subtle-dark: hsl(193 30% 13%);
 
   /* Status */
-  --color-palette-success:             hsl(142 72% 29%);
-  --color-palette-warning:             hsl(38 92% 50%);
-  --color-palette-error:               hsl(0 74% 42%);
-  --color-palette-info:                hsl(195 55% 45%);
-  --color-palette-destructive:         hsl(0 84% 60%);
-  --color-palette-destructive-dark:    hsl(0 63% 31%);
+  --color-palette-success: hsl(142 72% 29%);
+  --color-palette-warning: hsl(38 92% 50%);
+  --color-palette-error: hsl(0 74% 42%);
+  --color-palette-info: hsl(195 55% 45%);
+  --color-palette-destructive: hsl(0 84% 60%);
+  --color-palette-destructive-dark: hsl(0 63% 50%);
 
   /* ── Semantic Mapping (Light Mode defaults) ──
      These are what Tailwind utilities and shadcn
      components actually read.
   ──────────────────────────────────────────── */
 
-  --color-background:          var(--color-palette-background);
-  --color-foreground:          var(--color-palette-foreground);
+  --color-background: var(--color-palette-background);
+  --color-foreground: var(--color-palette-foreground);
 
-  --color-card:                var(--color-palette-surface);
-  --color-card-foreground:     var(--color-palette-foreground);
+  --color-card: var(--color-palette-surface);
+  --color-card-foreground: var(--color-palette-foreground);
 
-  --color-popover:             var(--color-palette-surface);
-  --color-popover-foreground:  var(--color-palette-foreground);
+  --color-popover: var(--color-palette-surface);
+  --color-popover-foreground: var(--color-palette-foreground);
 
-  --color-primary:             var(--color-palette-primary);
-  --color-primary-foreground:  var(--color-palette-foreground-dark);
+  --color-primary: var(--color-palette-primary);
+  --color-primary-foreground: var(--color-palette-foreground-dark);
 
-  --color-secondary:           var(--color-palette-primary-subtle);
-  --color-secondary-foreground:var(--color-palette-foreground);
+  --color-secondary: var(--color-palette-primary-subtle);
+  --color-secondary-foreground: var(--color-palette-foreground);
 
-  --color-muted:               var(--color-palette-muted);
-  --color-muted-foreground:    var(--color-palette-secondary);
+  --color-muted: var(--color-palette-muted);
+  --color-muted-foreground: var(--color-palette-secondary);
 
-  --color-accent:              var(--color-palette-accent);
-  --color-accent-foreground:   var(--color-palette-foreground-dark);
+  --color-accent: var(--color-palette-accent);
+  --color-accent-foreground: var(--color-palette-foreground-dark);
 
-  --color-destructive:         var(--color-palette-destructive);
+  --color-destructive: var(--color-palette-destructive);
   --color-destructive-foreground: var(--color-palette-foreground-dark);
 
-  --color-border:              var(--color-palette-border);
-  --color-input:               var(--color-palette-input);
-  --color-ring:                var(--color-palette-ring);
+  --color-border: var(--color-palette-border);
+  --color-input: var(--color-palette-input);
+  --color-ring: var(--color-palette-ring);
 
-  --color-success:             var(--color-palette-success);
-  --color-warning:             var(--color-palette-warning);
-  --color-error:               var(--color-palette-error);
-  --color-info:                var(--color-palette-info);
+  --color-success: var(--color-palette-success);
+  --color-warning: var(--color-palette-warning);
+  --color-error: var(--color-palette-error);
+  --color-info: var(--color-palette-info);
 }
 
 /* ── Dark Mode ────────────────────────────────── */
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-background:          var(--color-palette-background-dark);
-    --color-foreground:          var(--color-palette-foreground-dark);
+    --color-background: var(--color-palette-background-dark);
+    --color-foreground: var(--color-palette-foreground-dark);
 
-    --color-card:                var(--color-palette-surface-dark);
-    --color-card-foreground:     var(--color-palette-foreground-dark);
+    --color-card: var(--color-palette-surface-dark);
+    --color-card-foreground: var(--color-palette-foreground-dark);
 
-    --color-popover:             var(--color-palette-surface-dark);
-    --color-popover-foreground:  var(--color-palette-foreground-dark);
+    --color-popover: var(--color-palette-surface-dark);
+    --color-popover-foreground: var(--color-palette-foreground-dark);
 
-    --color-primary:             var(--color-palette-primary-dark);
-    --color-primary-foreground:  var(--color-palette-background-dark);
+    --color-primary: var(--color-palette-primary-dark);
+    --color-primary-foreground: var(--color-palette-background-dark);
 
-    --color-secondary:           var(--color-palette-primary-subtle-dark);
-    --color-secondary-foreground:var(--color-palette-foreground-dark);
+    --color-secondary: var(--color-palette-primary-subtle-dark);
+    --color-secondary-foreground: var(--color-palette-foreground-dark);
 
-    --color-muted:               var(--color-palette-muted-dark);
-    --color-muted-foreground:    var(--color-palette-secondary-dark);
+    --color-muted: var(--color-palette-muted-dark);
+    --color-muted-foreground: var(--color-palette-secondary-dark);
 
-    --color-accent:              var(--color-palette-accent-dark);
-    --color-accent-foreground:   var(--color-palette-background-dark);
+    --color-accent: var(--color-palette-accent-dark);
+    --color-accent-foreground: var(--color-palette-background-dark);
 
-    --color-destructive:         var(--color-palette-destructive-dark);
+    --color-destructive: var(--color-palette-destructive-dark);
 
-    --color-border:              var(--color-palette-border-dark);
-    --color-input:               var(--color-palette-input-dark);
-    --color-ring:                var(--color-palette-ring-dark);
+    --color-border: var(--color-palette-border-dark);
+    --color-input: var(--color-palette-input-dark);
+    --color-ring: var(--color-palette-ring-dark);
   }
 }
 
 /* ── Manual dark toggle (.dark class) ────────── */
 .dark {
-  --color-background:          var(--color-palette-background-dark);
-  --color-foreground:          var(--color-palette-foreground-dark);
+  --color-background: var(--color-palette-background-dark);
+  --color-foreground: var(--color-palette-foreground-dark);
 
-  --color-card:                var(--color-palette-surface-dark);
-  --color-card-foreground:     var(--color-palette-foreground-dark);
+  --color-card: var(--color-palette-surface-dark);
+  --color-card-foreground: var(--color-palette-foreground-dark);
 
-  --color-popover:             var(--color-palette-surface-dark);
-  --color-popover-foreground:  var(--color-palette-foreground-dark);
+  --color-popover: var(--color-palette-surface-dark);
+  --color-popover-foreground: var(--color-palette-foreground-dark);
 
-  --color-primary:             var(--color-palette-primary-dark);
-  --color-primary-foreground:  var(--color-palette-background-dark);
+  --color-primary: var(--color-palette-primary-dark);
+  --color-primary-foreground: var(--color-palette-background-dark);
 
-  --color-secondary:           var(--color-palette-primary-subtle-dark);
-  --color-secondary-foreground:var(--color-palette-foreground-dark);
+  --color-secondary: var(--color-palette-primary-subtle-dark);
+  --color-secondary-foreground: var(--color-palette-foreground-dark);
 
-  --color-muted:               var(--color-palette-muted-dark);
-  --color-muted-foreground:    var(--color-palette-secondary-dark);
+  --color-muted: var(--color-palette-muted-dark);
+  --color-muted-foreground: var(--color-palette-secondary-dark);
 
-  --color-accent:              var(--color-palette-accent-dark);
-  --color-accent-foreground:   var(--color-palette-background-dark);
+  --color-accent: var(--color-palette-accent-dark);
+  --color-accent-foreground: var(--color-palette-background-dark);
 
-  --color-destructive:         var(--color-palette-destructive-dark);
+  --color-destructive: var(--color-palette-destructive-dark);
 
-  --color-border:              var(--color-palette-border-dark);
-  --color-input:               var(--color-palette-input-dark);
-  --color-ring:                var(--color-palette-ring-dark);
+  --color-border: var(--color-palette-border-dark);
+  --color-input: var(--color-palette-input-dark);
+  --color-ring: var(--color-palette-ring-dark);
 }
 
 @theme inline {
@@ -174,6 +188,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground font-sans;
     transition: background-color 0.3s ease, color 0.3s ease;
@@ -203,18 +218,23 @@
   h1 {
     @apply text-3xl font-serif font-bold mt-8 mb-4 text-foreground border-b border-border pb-2;
   }
+
   h2 {
     @apply text-2xl font-serif font-bold mt-7 mb-3 text-foreground border-b border-border pb-2;
   }
+
   h3 {
     @apply text-xl font-serif font-semibold mt-6 mb-2 text-foreground;
   }
+
   h4 {
     @apply text-lg font-serif font-semibold mt-5 mb-2 text-foreground;
   }
+
   h5 {
     @apply text-base font-serif font-semibold mt-4 mb-1 text-foreground;
   }
+
   h6 {
     @apply text-sm font-serif font-semibold mt-4 mb-1 text-muted-foreground;
   }
@@ -229,6 +249,7 @@
     @apply underline underline-offset-4;
     color: var(--color-primary);
     text-decoration-color: color-mix(in srgb, var(--color-primary) 40%, transparent);
+
     @variant hover {
       text-decoration-color: var(--color-primary);
     }
@@ -238,14 +259,17 @@
   ul {
     @apply list-disc list-outside mb-4 pl-6 space-y-1;
   }
+
   ol {
     @apply list-decimal list-outside mb-4 pl-6 space-y-1;
   }
+
   li {
     @apply leading-7;
   }
-  li > ul,
-  li > ol {
+
+  li>ul,
+  li>ol {
     @apply mt-1 mb-0;
   }
 
@@ -263,6 +287,7 @@
   pre {
     @apply bg-secondary rounded-lg p-4 my-4 overflow-x-auto;
   }
+
   pre code {
     @apply bg-transparent p-0 text-sm leading-6;
   }
@@ -276,15 +301,19 @@
   table {
     @apply w-full text-sm border-collapse my-4;
   }
+
   thead {
     @apply bg-secondary;
   }
+
   th {
     @apply text-left font-semibold px-3 py-2 border border-border;
   }
+
   td {
     @apply px-3 py-2 border border-border;
   }
+
   tbody tr {
     @variant hover {
       @apply bg-secondary/50;
@@ -300,6 +329,7 @@
   strong {
     @apply font-semibold text-foreground;
   }
+
   em {
     @apply italic;
   }
